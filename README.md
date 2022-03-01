@@ -1,34 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## 프로젝트 시작하기
 
-## Getting Started
+`npm`으로 필요한 의존성을 받아주세요:
 
-First, run the development server:
+```bash
+npm install
+```
+
+## 설정하기
+
+### 환경 변수 설정하기
+
+Auth0 와 연동을 위하여 적절한 환경변수 파일이 필요합니다.
+
+프로젝트 최상위 폴더에 `.env.local` 파일을 생성하고, [노션 문서](https://www.notion.so/56b04d6fa38a48c7a6fefc63626ac696)에 있는 내용을 복사해 주세요. [Next.js의 환경변수 챕터 보기~](https://nextjs.org/docs/basic-features/environment-variables):
+
+최종 결과는 다음과 비슷한 파일입니다.
+
+```sh
+# A long secret value used to encrypt the session cookie
+AUTH0_SECRET='LONG_RANDOM_VALUE'
+# The base url of your application
+AUTH0_BASE_URL='http://localhost:3000'
+# The url of your Auth0 tenant domain
+AUTH0_ISSUER_BASE_URL='https://YOUR_AUTH0_DOMAIN.auth0.com'
+# Your Auth0 application's Client ID
+AUTH0_CLIENT_ID='YOUR_AUTH0_CLIENT_ID'
+# Your Auth0 application's Client Secret
+AUTH0_CLIENT_SECRET='YOUR_AUTH0_CLIENT_SECRET'
+# Your Auth0 API's Identifier
+# OMIT if you do not want to use the API part of the sample
+AUTH0_AUDIENCE='YOUR_AUTH0_API_IDENTIFIER'
+# The permissions your app is asking for
+# OMIT if you do not want to use the API part of the sample
+AUTH0_SCOPE='openid profile email read:shows'
+```
+
+**주의**: 프로덕션에 올릴 때에는 `AUTH0_SECRET` 필드에 충분히 긴 문자열을 넣어주셔야 합니다. (`openssl rand -hex 32` 같은 명령으로 생성하실 수 있습니다.).
+
+## 실행하기
+
+## 핫-리로드로 실행하기 (개발 빌드)
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 프로덕션용으로 빌드하기
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## 프로덕션 빌드 실행하기
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+npm run start
+```

@@ -43,6 +43,18 @@ const Home: NextPage = () => {
               </p>
             </a>
           </Link>
+
+          <Link
+            href="https://auth0.com/docs/quickstart/webapp/nextjs/01-login"
+            passHref
+          >
+            <a target="_blank" className={styles.card}>
+              <h2>auth0 next.js docs &rarr;</h2>
+              <p>
+                여기를 클릭하시면 auth0 nextjs 도큐멘트를 확인할 수 있습니다
+              </p>
+            </a>
+          </Link>
         </div>
       </main>
     </div>
