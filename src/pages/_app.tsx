@@ -2,6 +2,8 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 // import { ThemeProvider } from "styled-components";
 import GlobalStyle from "../styles/globalStyle";
+import Layout from "../components/layout/index";
+import { UserProvider } from "@auth0/nextjs-auth0";
 
 function SumitApp({ Component, pageProps }: AppProps) {
   return (
@@ -12,7 +14,11 @@ function SumitApp({ Component, pageProps }: AppProps) {
       </Head>
       <GlobalStyle />
       {/* <ThemeProvider> */}
-      <Component {...pageProps} />
+      <UserProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </UserProvider>
       {/* </ThemeProvider> */}
     </>
   );
