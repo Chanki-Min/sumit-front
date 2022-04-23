@@ -11,9 +11,9 @@ export interface Page {
 
   share: boolean;
 
-  createAt: Date;
+  createAt: number; // unix timestamp
 
-  updateAt: Date;
+  updateAt: number; // unix timestamp
 
   slides: Slide[];
 }
