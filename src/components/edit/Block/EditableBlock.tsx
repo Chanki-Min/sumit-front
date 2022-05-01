@@ -37,13 +37,15 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     }
 
     // 개발용 테스트 구문
-    console.log("block updated\n", JSON.stringify({ ...block }, undefined, 2));
+    console.log(
+      "block updated\n",
+      JSON.stringify({ ...block, children: "no dot print child" }, undefined, 2)
+    );
   }, [block]);
 
   // contentEditable 에서 텍스트 수정 이벤트 발생시 블록을 업데이트한다
   const onChange = useCallback(
     (e: ContentEditableEvent) => {
-      console.log("b1", block);
       // text field가 존재할때만 블록을 업데이트한다
       if ("text" in block.properties) {
         setBlock({
@@ -62,7 +64,6 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       const key = e.key;
       const prevKey = previousKey.current;
-      console.log("b2", block);
       //shift enter 지원
       if (key === "Enter" && prevKey !== "Shift") {
         e.preventDefault();
@@ -97,6 +98,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       children: children,
     });
 
+    console.log("Call CrateBlock API");
     // TODO 커서를 생성된 엘리먼트로 옮기기
   };
 
@@ -113,6 +115,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       children: children,
     });
 
+    console.log("Call DeleteBlock API");
     // TODO 커서를 가장 가까운 상위 엘리먼트로 옮기기
   };
 
