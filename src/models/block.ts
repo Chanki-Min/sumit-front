@@ -7,5 +7,5 @@ export type Block = BlockProperty & {
 
   order: number;
 
-  parent: number | null;
+  parent: string | null;
 };
