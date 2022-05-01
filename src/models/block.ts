@@ -1,7 +1,7 @@
 import { BlockProperty, BlockTypes } from "./properties";
 
 export interface Block {
-  uuid: number;
+  uuid: string;
 
   type: BlockTypes; // title_1, image 등의 블록 타입을 지정
 
@@ -12,5 +12,4 @@ export interface Block {
   order: number;
 
   parent: number | null;
-
 }
