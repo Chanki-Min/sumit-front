@@ -1,4 +1,5 @@
 export type BlockProperty =
+  | root_block_props
   | plain_text_props
   | heading_props
   | to_do_list_props
@@ -24,8 +25,10 @@ export type BlockTypes =
   | "media_file"
   | "carousel_slide"
   | "simple_margin"
-  | "grid";
+  | "grid"
+  | "root_block";
 
+export interface root_block_props {}
 export interface plain_text_props {
   text: string; // html strings, should be sanitized
 }

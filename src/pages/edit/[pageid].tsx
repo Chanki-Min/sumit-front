@@ -6,6 +6,7 @@ import {
 import { useState } from "react";
 import styled from "styled-components";
 import BlockDraggerSidebar from "../../components/edit/BlockDraggerSiderbar";
+import Editor from "../../components/edit/Editor";
 import MenuBar from "../../components/edit/MenuBar";
 import SlidesSelectionSidebar from "../../components/edit/SlidesSelectionSidebar";
 import { SliderParent } from "../../styles/Sidebar";
@@ -29,7 +30,9 @@ const EditPage = ({ user }: PageProps) => {
 
       <SliderParent>
         <SlidesSelectionSidebar visible={showLeftSidebar} />
-        <EditArea>abc</EditArea>
+        <EditArea>
+          <Editor />
+        </EditArea>
         <BlockDraggerSidebar visible={showRightSidebar} />
       </SliderParent>
     </>
