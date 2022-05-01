@@ -12,144 +12,99 @@ export type BlockProperty =
   | simple_margin_props
   | grid_props;
 
-export type BlockTypes =
-  | "plain_text"
-  | "heading_1"
-  | "heading_2"
-  | "heading_3"
-  | "to_do_list"
-  | "bulleted_list"
-  | "numbered_list"
-  | "media_image"
-  | "media_video"
-  | "media_file"
-  | "carousel_slide"
-  | "simple_margin"
-  | "grid"
-  | "root_block";
-
-export interface root_block_props {}
-export interface plain_text_props {
-  text: string; // html strings, should be sanitized
+export interface root_block_props {
+  type: "root_block";
+  properties: {};
 }
-
-export function isPlainTextProps(u: any): u is plain_text_props {
-  return typeof u?.text === "string";
+export interface plain_text_props {
+  type: "plain_text";
+  properties: {
+    text: string; // html strings, should be sanitized
+  };
 }
 
 interface heading_props {
-  text: string; // html strings, should be sanitized
-}
-
-export function isHeadingProps(u: any): u is heading_props {
-  return typeof u?.text === "string";
+  type: "heading_1" | "heading_2" | "heading_3";
+  properties: {
+    text: string; // html strings, should be sanitized
+  };
 }
 
 export interface to_do_list_props {
-  checked: boolean;
-  text: string; // html strings, should be sanitized
-}
+  type: "to_do_list";
 
-export function isToDoListProps(u: any): u is to_do_list_props {
-  return typeof u?.text === "string" && typeof u?.checked === "boolean";
+  properties: {
+    text: string; // html strings, should be sanitized
+    checked: boolean;
+  };
 }
 
 interface bulleted_list_props {
-  text: string; // html strings, should be sanitized
-}
-
-export function isBulltedListProps(u: any): u is bulleted_list_props {
-  return typeof u?.text === "string";
+  type: "bulleted_list";
+  properties: {
+    text: string; // html strings, should be sanitized
+  };
 }
 
 interface numbered_list_props {
-  text: string; // html strings, should be sanitized
-}
-
-export function isNumberdListProps(u: any): u is numbered_list_props {
-  return typeof u?.text === "string";
+  type: "numbered_list";
+  properties: {
+    text: string; // html strings, should be sanitized
+  };
 }
 
 interface media_image_props {
-  width: number;
-  height: number;
-  src: string; // URL 주소
-}
-
-export function isMediaImageProps(u: any): u is media_image_props {
-  return (
-    typeof u?.src === "string" &&
-    typeof u?.width === "number" &&
-    typeof u?.height === "number"
-  );
+  type: "media_image";
+  properties: {
+    width: number;
+    height: number;
+    src: string; // URL 주소
+  };
 }
 
 interface media_video_props {
-  width: number;
-  height: number;
-  src: string; // URL 주소
-}
-
-export function isMediaVideoProps(u: any): u is media_video_props {
-  return (
-    typeof u?.src === "string" &&
-    typeof u?.width === "number" &&
-    typeof u?.height === "number"
-  );
+  type: "media_video";
+  properties: {
+    width: number;
+    height: number;
+    src: string; // URL 주소
+  };
 }
 
 interface media_file_props {
-  title: string;
-  size: number; // 파일 사이즈
-  src: string; // URL 주소
-}
-
-export function isMediaFileProps(u: any): u is media_file_props {
-  return (
-    typeof u?.title === "string" &&
-    typeof u?.size === "number" &&
-    typeof u?.src === "string"
-  );
+  type: "media_file";
+  properties: {
+    title: string;
+    size: number; // 파일 사이즈
+    src: string; // URL 주소
+  };
 }
 
 interface carousel_slide {
-  enable_index_numbers: boolean;
-  enalble_navigation_buttons: boolean;
-}
-
-export function isCarouselSlideProps(u: any): u is carousel_slide {
-  return (
-    typeof u?.enable_index_numbers === "boolean" &&
-    typeof u?.enalble_navigation_buttons === "boolean"
-  );
+  type: "carousel_slide";
+  properties: {
+    enable_index_numbers: boolean;
+    enalble_navigation_buttons: boolean;
+  };
 }
 
 interface simple_margin_props {
-  height: number;
-}
-
-export function isSimpleMargin(u: any): u is simple_margin_props {
-  return typeof u?.height === "number";
+  type: "simple_margin";
+  properties: {
+    height: number;
+  };
 }
 
 interface grid_props {
-  row_size: number;
-  col_size: number;
+  type: "grid";
+  properties: {
+    row_size: number;
+    col_size: number;
 
-  row_ratios: number[];
-  col_ratios: number[];
+    row_ratios: number[];
+    col_ratios: number[];
 
-  width: number;
-  height: number;
-}
-
-export function isGridProps(u: any): u is grid_props {
-  return (
-    typeof u?.row_size === "number" &&
-    typeof u?.col_size === "number" &&
-    typeof u?.width === "number" &&
-    typeof u?.height === "number" &&
-    Array.isArray(u?.row_ratios) &&
-    Array.isArray(u?.col_ratios)
-  );
+    width: number;
+    height: number;
+  };
 }

@@ -21,7 +21,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       break;
     default:
       return (
-        <div>
+        <div id={uuid}>
           Type: {type}, Content: {JSON.stringify(properties)}
         </div>
       );
@@ -42,27 +42,27 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 export default EditableBlock;
 
 const RenderTodo: React.FC<EditableBlockProps> = ({ block }) => {
-  const prop = block.properties as to_do_list_props;
+  const prop = block as to_do_list_props;
 
-  const [checked, setChecked] = useState<boolean>(prop.checked);
+  const [checked, setChecked] = useState<boolean>(prop.properties.checked);
   const toggleChecked = () => setChecked(!checked);
 
   return (
     <>
       <div onClick={toggleChecked}>
         <button style={{ minHeight: "5px" }}>{checked ? "V" : " "}</button>{" "}
-        {prop.text}
+        {prop.properties.text}
       </div>
     </>
   );
 };
 
 const RenderPlainText: React.FC<EditableBlockProps> = ({ block }) => {
-  const prop = block.properties as plain_text_props;
+  const prop = block as plain_text_props;
 
   return (
     <>
-      <div>{prop.text}</div>
+      <div>{prop.properties.text}</div>
     </>
   );
 };
