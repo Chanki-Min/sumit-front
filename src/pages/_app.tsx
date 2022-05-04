@@ -5,6 +5,8 @@ import GlobalStyle from "../styles/globalStyle";
 import Layout from "../components/layout/index";
 import { UserProvider } from "@auth0/nextjs-auth0";
 
+import "semantic-ui-css/semantic.min.css";
+
 function SumitApp({ Component, pageProps }: AppProps) {
   return (
     <>
