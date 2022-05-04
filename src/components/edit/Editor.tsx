@@ -25,7 +25,7 @@ const Editor: React.FC = () => {
   const [rootBlock, setRootBlock] = useState(initialBlock);
 
   useEffect(() => {
-    console.log("Call GetBlock API");
+    console.log("Call GetBlock API test");
   }, []);
   /*
     root block은 형제가 존재하지 않기 떄문에 블록 핸들러는 아무 일도 하지 않는다.
