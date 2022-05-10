@@ -9,6 +9,7 @@ const initialBlock: Block = {
   properties: {},
   parent: null,
   order: 0,
+
   children: [
     {
       uuid: uuidv4(),
@@ -25,8 +26,11 @@ const Editor: React.FC = () => {
   const [rootBlock, setRootBlock] = useState(initialBlock);
 
   useEffect(() => {
-    console.log("Call GetBlock API test");
-  }, []);
+    console.log(
+      "root block changed\n",
+      JSON.stringify(rootBlock, undefined, 2)
+    );
+  }, [rootBlock]);
   /*
     root block은 형제가 존재하지 않기 떄문에 블록 핸들러는 아무 일도 하지 않는다.
     렌더링 최적화 및 자원 소모를 줄이기 위해 no-op function의 값(reference address)를 고정한다.
