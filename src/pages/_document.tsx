@@ -36,7 +36,13 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head></Head>
+        <Head>
+          <script
+            async
+            src="https://kit.fontawesome.com/36d7278b8e.js"
+            crossOrigin="anonymous"
+          ></script>
+        </Head>
         <body>
           <Main />
           <NextScript />
