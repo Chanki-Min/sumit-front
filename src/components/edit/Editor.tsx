@@ -1,7 +1,17 @@
 import { Block } from "../../models/block";
 import { v4 as uuidv4 } from "uuid";
 import EditableBlock from "./Block/EditableBlock";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  hadleUpdateChildByPath,
+  handleAddBlockByPath,
+  handleDeleteBlockByPath,
+  handleMoveToDifferentParent,
+  handleMoveWithinParent,
+  IWithPath,
+} from "../../tree/tree";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const initialBlock: Block = {
   uuid: uuidv4(),
@@ -19,31 +29,127 @@ const initialBlock: Block = {
       order: 0,
       children: [],
     },
+    {
+      uuid: uuidv4(),
+      type: "plain_text",
+      properties: { text: "get some childhood" },
+      parent: null,
+      order: 1,
+      children: [],
+    },
   ],
 };
 
 const Editor: React.FC = () => {
-  const [rootBlock, setRootBlock] = useState(initialBlock);
+  const [rootBlock, setRootBlock] = useState<Block>(initialBlock);
+
+  const rootBlockRef = useRef<Block>(rootBlock); // handler function의 closure는 이전 상태를 바라볼 수 있으므로 ref로 수정한다.
 
   useEffect(() => {
-    console.log(
-      "root block changed\n",
-      JSON.stringify(rootBlock, undefined, 2)
-    );
+    rootBlockRef.current = rootBlock;
   }, [rootBlock]);
-  /*
-    root block은 형제가 존재하지 않기 떄문에 블록 핸들러는 아무 일도 하지 않는다.
-    렌더링 최적화 및 자원 소모를 줄이기 위해 no-op function의 값(reference address)를 고정한다.
-   */
-  const nopFunc = useCallback(() => {}, []);
+
+  const handleAddSibling = (
+    dropPath: number[],
+    newBlock: Block,
+    thisElement: HTMLElement | null
+  ) => {
+    console.log("add before", rootBlockRef.current);
+    const newRootBlock = handleAddBlockByPath(
+      rootBlockRef.current,
+      dropPath,
+      newBlock
+    );
+    setRootBlock(newRootBlock);
+  };
+
+  const handleDeleteThis = (
+    thisPath: number[],
+    thisElement: HTMLElement | null
+  ) => {
+    debugger;
+    console.log("delete before", rootBlockRef.current);
+    const newRootBlock = handleDeleteBlockByPath(
+      rootBlockRef.current,
+      thisPath
+    );
+    setRootBlock(newRootBlock);
+  };
+
+  const handleUpdateWithoutChildren = (
+    thisPath: number[],
+    updateProps: Block
+  ) => {
+    const newRootBlock = hadleUpdateChildByPath(
+      rootBlockRef.current,
+      thisPath,
+      updateProps
+    );
+    setRootBlock(newRootBlock);
+  };
+
+  const handleMoveToPath = (
+    splitDropzonePath: number[],
+    { path: itemPath, ...item }: IWithPath<Block>
+  ) => {
+    const dropzonePath = splitDropzonePath.join("-");
+    const splitItemPath = itemPath.split("-").map(Number);
+
+    const dropzoneParentPath = splitDropzonePath.slice(0, -1).join("-");
+    const itemParentPath = splitItemPath.slice(0, -1).join("-");
+
+    console.log(dropzonePath, itemPath);
+
+    // NO-OP case 는 Dropzone > useDrop > canDrop 에 있지만 만약을 위해 추가구현함
+
+    // case: dropzone과 itempath가 동일한 경우 NO-OP
+    if (dropzonePath === itemPath) {
+      console.log("drag handle:: NOP-SAME_PATH");
+      return;
+    }
+
+    // case: dropzone이 itempath 안에 존재하는 경우 NO-OP
+    if (dropzonePath.startsWith(itemPath)) {
+      console.log("drag handle:: NOP-DROP_INNER_ITEM");
+      return;
+    }
+
+    // NO-OP case 종료
+
+    // case: dropzone과 itemPath의 부모가 동일한 경우
+    if (dropzoneParentPath === itemParentPath) {
+      const newRootBlock = handleMoveWithinParent(
+        rootBlockRef.current,
+        splitDropzonePath,
+        splitItemPath
+      );
+      setRootBlock(newRootBlock);
+      return;
+    }
+
+    // case: dropzone과 itemPath의 부모가 다른 경우 {
+    const newRootBlock = handleMoveToDifferentParent(
+      rootBlockRef.current,
+      splitDropzonePath,
+      splitItemPath,
+      item
+    );
+    setRootBlock(newRootBlock);
+    return;
+  };
 
   return (
     <div id="slide">
-      <EditableBlock
-        block={rootBlock}
-        onAddSibling={nopFunc}
-        onDeleteThis={nopFunc}
-      />
+      <DndProvider backend={HTML5Backend}>
+        <EditableBlock
+          path="0"
+          block={rootBlock}
+          handleAddSibling={handleAddSibling}
+          handleDeleteThis={handleDeleteThis}
+          handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+          handleMoveToPath={handleMoveToPath}
+        />
+      </DndProvider>
     </div>
   );
 };

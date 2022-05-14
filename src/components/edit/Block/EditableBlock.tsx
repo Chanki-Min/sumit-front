@@ -1,123 +1,126 @@
-import React, {
-  forwardRef,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { forwardRef, ReactElement, useEffect, useRef } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
+import { useDrag } from "react-dnd";
+import styled from "styled-components";
 import { Block } from "../../../models/block";
 import { plain_text_props } from "../../../models/properties";
+import { IWithPath } from "../../../tree/tree";
+import { getNextPath } from "../../../tree/treeUtil";
+import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
 import { getDefaultBlock } from "../Editor";
 
 import styles from "./EditableBlock.module.scss";
 
 interface EditableBlockProps {
   block: Block;
-  onAddSibling: (newBlock: Block, thisElement: HTMLElement | null) => void;
-  onDeleteThis: (thisElement: HTMLElement | null) => void;
+  path: string;
+  handleAddSibling: (
+    dropPath: number[],
+    newBlock: Block,
+    thisElement: HTMLElement | null
+  ) => void;
+  handleDeleteThis: (
+    thisPath: number[],
+    thisElement: HTMLElement | null
+  ) => void;
+  handleUpdateWithoutChildren: (thisPath: number[], updateProps: Block) => void;
+  handleMoveToPath: (
+    dropzonePath: number[],
+    { path: itemPath, ...item }: IWithPath<Block>
+  ) => void;
 }
 
 const EditableBlock: React.FC<EditableBlockProps> = (props) => {
-  const { block: initialBlock, onAddSibling, onDeleteThis } = props;
-  const [block, setBlock] = useState<Block>(initialBlock);
+  const {
+    block,
+    handleAddSibling,
+    handleDeleteThis,
+    handleUpdateWithoutChildren,
+    handleMoveToPath,
+    path,
+  } = props;
 
+  const splitedPath = path.split("-").map(Number);
   const contentEditable = useRef<HTMLElement>(null);
-  const previousKey = useRef<string>("");
+  const previousKey = useRef<string>(""); // 직전에 눌린 Key stroke 문자열
 
   // react-contenteditable의 일부 변수가 상태 변경을 감지하지 못하기 때문에 text filed를 ref로도 저장한다.
   const textValue = useRef<string | null>(
     "text" in block.properties ? block.properties.text : null
   );
-
   useEffect(() => {
     if ("text" in block.properties) {
       textValue.current = block.properties.text;
     }
-
-    // 개발용 테스트 구문
-    console.log(
-      "block updated\n",
-      JSON.stringify({ ...block, children: "no dot print child" }, undefined, 2)
-    );
   }, [block]);
 
   // contentEditable 에서 텍스트 수정 이벤트 발생시 블록을 업데이트한다
-  const onChange = useCallback(
-    (e: ContentEditableEvent) => {
-      // text field가 존재할때만 블록을 업데이트한다
-      if ("text" in block.properties) {
-        setBlock({
-          ...block,
-          properties: {
-            ...block.properties,
-            text: e.target.value,
-          },
-        } as Block);
-      }
-    },
-    [block]
-  );
-
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const key = e.key;
-      const prevKey = previousKey.current;
-      //shift enter 지원
-      if (key === "Enter" && prevKey !== "Shift") {
-        e.preventDefault();
-        console.log("key enter");
-        onAddSibling(
-          getDefaultBlock(block.uuid, block.order + 1),
-          contentEditable.current
-        );
-      }
-      if (key === "Backspace" && textValue.current === "") {
-        e.preventDefault();
-        onDeleteThis(contentEditable.current);
-      }
-
-      // TODO tab 이벤트 구현
-      previousKey.current = key;
-    },
-    [block, onAddSibling, onDeleteThis]
-  );
-
-  // block에 자식 블록을 추가하고, 커서를 다음 엘리먼트로 옮긴다
-  const addChildToNextIndex = (
-    currentIndex: number,
-    newBlock: Block,
-    thisElement: HTMLElement | null
-  ) => {
-    const children = [...block.children];
-    children.splice(currentIndex + 1, 0, newBlock);
-
-    setBlock({
-      ...block,
-      children: children,
-    });
-
-    console.log("Call CrateBlock API");
-    // TODO 커서를 생성된 엘리먼트로 옮기기
+  const handleContentEditableChange = (e: ContentEditableEvent) => {
+    // text field가 존재할때만 블록을 업데이트한다
+    if ("text" in block.properties) {
+      handleUpdateWithoutChildren(splitedPath, {
+        ...block,
+        properties: {
+          ...block.properties,
+          text: e.target.value,
+        },
+      } as Block);
+    }
   };
 
-  //block의 해당 index 자식 블록을 삭제한다
-  const deleteBlockByIndex = (
-    currentIndex: number,
-    thisElement: HTMLElement | null
-  ) => {
-    const children = [...block.children];
-    children.splice(currentIndex, 1);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const key = e.key;
+    const prevKey = previousKey.current;
+    //shift enter 지원
+    if (key === "Enter" && prevKey !== "Shift") {
+      e.preventDefault();
+      console.log("key enter");
+      handleAddSibling(
+        getNextPath(splitedPath),
+        getDefaultBlock(block.uuid, block.order + 1),
+        contentEditable.current
+      );
+    }
+    if (key === "Backspace" && textValue.current === "") {
+      e.preventDefault();
+      handleDeleteThis(splitedPath, contentEditable.current);
+    }
 
-    setBlock({
-      ...block,
-      children: children,
-    });
-
-    console.log("Call DeleteBlock API");
-    // TODO 커서를 가장 가까운 상위 엘리먼트로 옮기기
+    // TODO tab 이벤트 구현
+    previousKey.current = key;
   };
+
+  // Dragger handler
+  const [{ isDragging }, drag] = useDrag<
+    IWithPath<Block>,
+    unknown, // drop function 의 반환 결과는 사용하지 않는다
+    { isDragging: boolean }
+  >(() => ({
+    type: ItemTypes.BLOCK,
+    item: {
+      ...block,
+      path: path,
+    },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+  //   return (
+  //     <div
+  //       ref={drag}
+  //       style={{
+  //         opacity: isDragging ? 0.5 : 1,
+  //         fontSize: 25,
+  //         fontWeight: "bold",
+  //         cursor: "move",
+  //       }}
+  //     >
+  //       ♘
+  //     </div>
+  //   );
+  // };
+
+  // Dragger handler end
 
   let renderElement: ReactElement<any, any> | null = <></>;
   switch (block.type) {
@@ -125,8 +128,8 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       renderElement = (
         <RenderPlainText
           block={block}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
+          onChange={handleContentEditableChange}
+          onKeyDown={handleKeyDown}
           ref={contentEditable}
         />
       );
@@ -146,20 +149,30 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
   return (
     <>
-      {renderElement}
+      <Dropzone
+        path={path}
+        handleMoveToPath={handleMoveToPath}
+        isLastDropzoneOnThisDepth={false}
+      />
+      <DraggerContainer ref={drag}>{renderElement}</DraggerContainer>
+
       <div style={{ marginLeft: "10px" }}>
         {block.children.map((cb, index) => (
           <EditableBlock
+            path={`${path}-${index}`}
             key={cb.uuid}
             block={cb}
-            onAddSibling={(block: Block, thisElement: HTMLElement | null) =>
-              addChildToNextIndex(index, block, thisElement)
-            }
-            onDeleteThis={(thisElement: HTMLElement | null) =>
-              deleteBlockByIndex(index, thisElement)
-            }
+            handleAddSibling={handleAddSibling}
+            handleDeleteThis={handleDeleteThis}
+            handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+            handleMoveToPath={handleMoveToPath}
           />
         ))}
+        <Dropzone
+          path={`${path}-${block.children.length}`}
+          handleMoveToPath={handleMoveToPath}
+          isLastDropzoneOnThisDepth
+        />
       </div>
     </>
   );
@@ -171,6 +184,33 @@ interface RenderderProps {
   onChange: (e: ContentEditableEvent) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
+
+const DraggerContainer = styled.div`
+  display: flex;
+  justify-content: stretch;
+  width: 100%;
+
+  * {
+    flex: 1 1;
+  }
+
+  &::before {
+    display: inline-block;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    font: var(--fa-font-solid);
+    content: "\f550";
+
+    visibility: hidden;
+    flex: 0 0;
+    margin: 4px 3px 0 0;
+  }
+
+  &:focus-within::before {
+    visibility: visible;
+    content: "\f550";
+  }
+`;
 
 const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
   function RenderPlainText({ block, onChange, onKeyDown }, ref) {
