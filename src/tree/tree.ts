@@ -1,5 +1,13 @@
+import { cloneDeep } from "lodash";
 import { Block } from "../models/block";
 
+interface IHasChildren<T> {
+  children: T[];
+}
+
+export type IWithPath<T extends {}> = T & {
+  path: string;
+};
 /**
  * 같은 parent block 안에서 drop된 children의 위치를 변경한다
  *
@@ -13,11 +21,111 @@ export const handleMoveWithinParent = (
   splitDropZonePath: number[],
   splitItemPath: number[]
 ) => {
-  return _reorderChildren(
-    rootBlock.children,
+  const newRootBlock = cloneDeep(rootBlock);
+  newRootBlock.children = _reorderChildren(
+    newRootBlock.children,
     splitDropZonePath.slice(1),
     splitItemPath.slice(1)
   );
+
+  return newRootBlock;
+};
+
+export const handleMoveToDifferentParent = (
+  rootBlock: Block,
+  splitDropZonePath: number[],
+  splitItemPath: number[],
+  item: Block
+) => {
+  const newRootBlock = cloneDeep(rootBlock);
+  newRootBlock.children = _removeChildByPath(
+    newRootBlock.children,
+    splitItemPath.slice(1)
+  );
+
+  newRootBlock.children = _addChildByPath(
+    newRootBlock.children,
+    splitDropZonePath.slice(1),
+    item
+  );
+
+  return newRootBlock;
+};
+
+export const handleAddBlockByPath = (
+  rootBlock: Block,
+  splitDropZonePath: number[],
+  item: Block
+) => {
+  debugger;
+  let newRootBlock = cloneDeep(rootBlock);
+  newRootBlock.children = _addChildByPath(
+    newRootBlock.children,
+    splitDropZonePath.slice(1),
+    item
+  );
+  return newRootBlock;
+};
+
+export const handleDeleteBlockByPath = (
+  rootBlock: Block,
+  splitItemPath: number[]
+) => {
+  debugger;
+  let newRootBlock = cloneDeep(rootBlock);
+  newRootBlock.children = _removeChildByPath(
+    newRootBlock.children,
+    splitItemPath.slice(1)
+  );
+  return newRootBlock;
+};
+
+export const hadleUpdateChildByPath = (
+  rootBlock: Block,
+  splitItemPath: number[],
+  updateProps: Omit<Block, "children">
+) => {
+  let newRootBlock = cloneDeep(rootBlock);
+  newRootBlock.children = _updateChildDataByPath(
+    newRootBlock.children,
+    splitItemPath.slice(1),
+    updateProps
+  );
+  return newRootBlock;
+};
+
+const _updateChildDataByPath = <T extends IHasChildren<T>>(
+  children: T[],
+  splitItemPath: number[],
+  item: Omit<T, "children">
+) => {
+  // 재귀 탈출 조건, 해당 child를 변경한다
+  if (splitItemPath.length === 1) {
+    children[splitItemPath[0]] = {
+      ...item,
+      children: children[splitItemPath[0]].children,
+    } as T;
+    return children;
+  }
+
+  // 아직 마지막 단계가 아니라면, 현재 children은 그대로 두고 path에 해당하는 child만 수정하도록 한다
+  const updatedChildren = cloneDeep(children);
+
+  const currentStepIndex = Number(splitItemPath.slice(0, 1));
+
+  const splitItemNextPath = splitItemPath.slice(1);
+  const nodeChildren = updatedChildren[currentStepIndex];
+
+  updatedChildren[currentStepIndex] = {
+    ...nodeChildren,
+    children: _updateChildDataByPath(
+      nodeChildren.children,
+      splitItemNextPath,
+      item
+    ),
+  };
+
+  return updatedChildren;
 };
 
 /**
@@ -72,7 +180,7 @@ const _insert = <T>(list: T[], index: number, newItem: T) => [
  * @param splitItemPath: 현재 item의 path
  * @returns
  */
-const _reorderChildren = <T extends { children: T[] }>(
+const _reorderChildren = <T extends IHasChildren<T>>(
   children: T[],
   splitDropZonePath: number[],
   splitItemPath: number[]
@@ -105,68 +213,75 @@ const _reorderChildren = <T extends { children: T[] }>(
   return updatedChildren;
 };
 
-// export type BlockWithPath = Block & {
-//   path: string; // '-' splitted path
-// };
+/**
+ * __PURE__ __REQURSIVE__
+ *
+ * 해당 splitItemPath 에 있는 child를 제거합니다
+ *
+ * @param children
+ * @param splitDropZonePath : drop된 위치의 path
+ * @param splitItemPath: 현재 item의 path
+ * @returns
+ */
+const _removeChildByPath = <T extends IHasChildren<T>>(
+  children: T[],
+  splitItemPath: number[]
+) => {
+  if (splitItemPath.length === 1) {
+    const itemIndex = Number(splitItemPath[0]);
+    return _remove(children, itemIndex);
+  }
 
-// /**
-//  * API 응답으로 받은 block 객체를 javascript가 탐색할 수 있도록 path를 붙인 인터페이스 객체를 반환한다.
-//  * path는 depth 배열을 하이픈 (-) 으로 join한 string이다. root block의 depth는 0으로 한다
-//  *
-//  * @author Chanki Min
-//  * @param rootBlock api 응답으로 돌아온 block 객체
-//  * @returns path가 붙여진 블록 객체
-//  */
-// export const initializeBlockWithPath = (rootBlock: Block): BlockWithPath => {
-//   if (rootBlock.children.length === 0) {
-//     return {
-//       ...rootBlock,
-//       path: "0",
-//     };
-//   }
+  const updatedChildren = [...children];
 
-//   return {
-//     ...rootBlock,
-//     path: "0",
-//     children: rootBlock.children.map((child, index) =>
-//       __internel__reqursive__initializeBlockWithPath(child, `0-${index}`)
-//     ),
-//   };
-// };
+  const curIndex = Number(splitItemPath.slice(0, 1));
 
-// /**
-//  * API 응답으로 받은 block 객체를 javascript가 탐색할 수 있도록 path를 붙인 인터페이스 객체를 반환한다.
-//  * path는 depth 배열을 하이픈 (-) 으로 join한 string이다. root block의 depth는 0으로 한다
-//  *
-//  * 재귀 함수를 외부로 노출할 경우 예상치 못한 path 매개변수를 넣을 위험이 있기 때문에 internel reqursive는
-//  * export 하지 않는다
-//  *
-//  * @author Chanki Min
-//  * @param block api 응답으로 돌아온 block 객체
-//  * @returns path가 붙여진 블록 객체
-//  */
-// const __internel__reqursive__initializeBlockWithPath = (
-//   block: Block,
-//   path: string
-// ): BlockWithPath => {
-//   if (!path.startsWith("0")) {
-//     throw new Error(
-//       "initializeBlockWithPath: Unexpected starting path, path should start with '0'"
-//     );
-//   }
+  // Update the specific node's children
+  const splitItemChildrenPath = splitItemPath.slice(1);
+  const nodeChildren = updatedChildren[curIndex];
+  updatedChildren[curIndex] = {
+    ...nodeChildren,
+    children: _removeChildByPath(nodeChildren.children, splitItemChildrenPath),
+  };
 
-//   if (block.children.length === 0) {
-//     return {
-//       ...block,
-//       path: path,
-//     };
-//   }
+  return updatedChildren;
+};
 
-//   return {
-//     ...block,
-//     path: path,
-//     children: block.children.map((child, index) =>
-//       __internel__reqursive__initializeBlockWithPath(child, `${path}-${index}`)
-//     ),
-//   };
-// };
+/**
+ * __PURE__ __REQURSIVE__
+ *
+ * 해당 splitItemPath 에 새로운 item을 추가합니다
+ *
+ * @param children
+ * @param splitDropZonePath : drop된 위치의 path
+ * @param splitItemPath: 현재 item의 path
+ * @returns
+ */
+const _addChildByPath = <T extends IHasChildren<T>>(
+  children: T[],
+  splitDropZonePath: number[],
+  item: T
+) => {
+  if (splitDropZonePath.length === 1) {
+    const dropZoneIndex = Number(splitDropZonePath[0]);
+    return _insert(children, dropZoneIndex, item);
+  }
+
+  const updatedChildren = [...children];
+
+  const curIndex = Number(splitDropZonePath.slice(0, 1));
+
+  // Update the specific node's children
+  const splitItemChildrenPath = splitDropZonePath.slice(1);
+  const nodeChildren = updatedChildren[curIndex];
+  updatedChildren[curIndex] = {
+    ...nodeChildren,
+    children: _addChildByPath(
+      nodeChildren.children,
+      splitItemChildrenPath,
+      item
+    ),
+  };
+
+  return updatedChildren;
+};
