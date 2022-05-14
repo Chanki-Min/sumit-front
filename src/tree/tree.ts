@@ -57,7 +57,6 @@ export const handleAddBlockByPath = (
   splitDropZonePath: number[],
   item: Block
 ) => {
-  debugger;
   let newRootBlock = cloneDeep(rootBlock);
   newRootBlock.children = _addChildByPath(
     newRootBlock.children,
@@ -71,7 +70,6 @@ export const handleDeleteBlockByPath = (
   rootBlock: Block,
   splitItemPath: number[]
 ) => {
-  debugger;
   let newRootBlock = cloneDeep(rootBlock);
   newRootBlock.children = _removeChildByPath(
     newRootBlock.children,

@@ -1,4 +1,10 @@
-import React, { forwardRef, ReactElement, useEffect, useRef } from "react";
+import React, {
+  forwardRef,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { useDrag } from "react-dnd";
 import styled from "styled-components";
@@ -95,16 +101,19 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     IWithPath<Block>,
     unknown, // drop function 의 반환 결과는 사용하지 않는다
     { isDragging: boolean }
-  >(() => ({
-    type: ItemTypes.BLOCK,
-    item: {
-      ...block,
-      path: path,
-    },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
+  >(
+    () => ({
+      type: ItemTypes.BLOCK,
+      item: {
+        ...block,
+        path: path,
+      },
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+      }),
     }),
-  }));
+    [block, path]
+  );
   //   return (
   //     <div
   //       ref={drag}
@@ -130,7 +139,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           block={block}
           onChange={handleContentEditableChange}
           onKeyDown={handleKeyDown}
-          ref={contentEditable}
+          // ref={contentEditable}
         />
       );
       break;
@@ -160,7 +169,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         {block.children.map((cb, index) => (
           <EditableBlock
             path={`${path}-${index}`}
-            key={cb.uuid}
+            key={`${path}-${index}-${cb.uuid}`}
             block={cb}
             handleAddSibling={handleAddSibling}
             handleDeleteThis={handleDeleteThis}
@@ -222,7 +231,7 @@ const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
         html={prop.properties.text}
         tagName="p"
         onChange={onChange}
-        innerRef={ref ?? undefined}
+        // innerRef={ref ?? undefined}
         onKeyDown={onKeyDown}
       />
     );
