@@ -1,19 +1,21 @@
-import Slide from "./Slide";
+import Slide from './Slide';
 
 export interface Page {
-  uuid: number;
+	uuid: number;
 
-  user_uuid: string;
+	user_uuid: string;
 
-  title: string;
+	title: string;
 
-  description: string;
+	description: string;
 
-  share: boolean;
+	hashtags: string[];
 
-  createAt: number; // unix timestamp
+	share: boolean;
 
-  updateAt: number; // unix timestamp
+	createAt: number; // unix timestamp
 
-  slides: Slide[];
+	updateAt: number; // unix timestamp
+
+	slides: Slide[];
 }

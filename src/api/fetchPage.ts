@@ -1,59 +1,63 @@
-import { Page } from "../models/page";
+import { Page } from '../models/page';
 
 interface FetchPagesProps {
-  withSlides?: boolean; // default true, false일 경우 슬라이드를 노출하지 않는다
+	withSlides?: boolean; // default true, false일 경우 슬라이드를 노출하지 않는다
 }
 
 const fetchPages = async (options: FetchPagesProps) => {
-  const { withSlides } = options;
+	const { withSlides } = options;
 
-  if (!!withSlides) {
-    return mockData;
-  }
+	if (!!withSlides) {
+		return mockData;
+	}
 
-  return mockData.map(omitSlide);
+	return mockData.map(omitSlide);
 };
 
 export default fetchPages;
 
-const omitSlide = (md: Page): Omit<Page, "slides"> => {
-  const { slides, ...rest } = md;
-  return rest;
+const omitSlide = (md: Page): Omit<Page, 'slides'> => {
+	const { slides, ...rest } = md;
+	return rest;
 };
 
 const mockData: Page[] = [
-  {
-    uuid: 1,
+	{
+		uuid: 1,
 
-    user_uuid: "test_user_uuid",
+		user_uuid: 'test_user_uuid',
 
-    title: "삼성전자 자기소개서",
+		title: '삼성전자 자기소개서',
 
-    description: "2022 삼성 공채 자기소개서",
+		description: '2022 삼성 공채 자기소개서',
 
-    share: true,
+		hashtags: ['#포트폴리오', '#채용'],
 
-    createAt: new Date().getTime(),
+		share: true,
 
-    updateAt: new Date().getTime(),
+		createAt: new Date().getTime(),
 
-    slides: [],
-  },
-  {
-    uuid: 2,
+		updateAt: new Date().getTime(),
 
-    user_uuid: "test_user_uuid",
+		slides: [],
+	},
+	{
+		uuid: 2,
 
-    title: "디자인 포폴 모음",
+		user_uuid: 'test_user_uuid',
 
-    description: "내가 지금까지 만든 포폴들",
+		title: '디자인 포폴 모음',
 
-    share: false,
+		description: '내가 지금까지 만든 포폴들',
 
-    createAt: new Date().getTime(),
+		share: false,
 
-    updateAt: new Date().getTime(),
+		hashtags: ['#포트폴리오'],
 
-    slides: [],
-  },
+		createAt: new Date().getTime(),
+
+		updateAt: new Date().getTime(),
+
+		slides: [],
+	},
 ];
