@@ -7,6 +7,7 @@ import {
   handleAddBlockByPath,
   handleDeleteBlockByPath,
   handleMoveToDifferentParent,
+  handleMoveToParentLastChildWithFlat,
   handleMoveWithinParent,
   IWithPath,
 } from "../../tree/tree";
@@ -65,13 +66,15 @@ const Editor: React.FC = () => {
 
   const handleDeleteThis = (
     thisPath: number[],
+    item: Block,
     thisElement: HTMLElement | null
   ) => {
-    debugger;
     console.log("delete before", rootBlockRef.current);
     const newRootBlock = handleDeleteBlockByPath(
       rootBlockRef.current,
-      thisPath
+      thisPath,
+      item,
+      false
     );
     setRootBlock(newRootBlock);
   };
@@ -92,13 +95,12 @@ const Editor: React.FC = () => {
     splitDropzonePath: number[],
     { path: itemPath, ...item }: IWithPath<Block>
   ) => {
+    debugger;
     const dropzonePath = splitDropzonePath.join("-");
     const splitItemPath = itemPath.split("-").map(Number);
 
     const dropzoneParentPath = splitDropzonePath.slice(0, -1).join("-");
     const itemParentPath = splitItemPath.slice(0, -1).join("-");
-
-    console.log(dropzonePath, itemPath);
 
     // NO-OP case 는 Dropzone > useDrop > canDrop 에 있지만 만약을 위해 추가구현함
 
@@ -138,6 +140,19 @@ const Editor: React.FC = () => {
     return;
   };
 
+  const handleIndentation = (
+    splitParentPath: number[],
+    splitItemPath: number[],
+    item: Block
+  ) => {
+    const newRootBlock = handleMoveToParentLastChildWithFlat(
+      rootBlockRef.current,
+      splitParentPath,
+      splitItemPath,
+      item
+    );
+    setRootBlock(newRootBlock);
+  };
   return (
     <div id="slide">
       <DndProvider backend={HTML5Backend}>
@@ -148,6 +163,7 @@ const Editor: React.FC = () => {
           handleDeleteThis={handleDeleteThis}
           handleUpdateWithoutChildren={handleUpdateWithoutChildren}
           handleMoveToPath={handleMoveToPath}
+          handleIndentation={handleIndentation}
         />
       </DndProvider>
     </div>

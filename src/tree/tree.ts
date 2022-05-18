@@ -31,13 +31,24 @@ export const handleMoveWithinParent = (
   return newRootBlock;
 };
 
+/**
+ *
+ * @param rootBlock
+ * @param splitDropZonePath
+ * @param splitItemPath
+ * @param item
+ * @param isIndentMode True 일 경우, item의 1차 자식들까지 모두 편입시킨다, 이는 indentation에서 사용 가능하다
+ * @returns
+ */
 export const handleMoveToDifferentParent = (
   rootBlock: Block,
   splitDropZonePath: number[],
   splitItemPath: number[],
-  item: Block
+  item: Block,
+  isIndentMode: boolean = false
 ) => {
   const newRootBlock = cloneDeep(rootBlock);
+
   newRootBlock.children = _removeChildByPath(
     newRootBlock.children,
     splitItemPath.slice(1)
@@ -48,6 +59,54 @@ export const handleMoveToDifferentParent = (
     splitDropZonePath.slice(1),
     item
   );
+
+  if (isIndentMode) {
+    newRootBlock.children = item.children.reduce((acc, block, index) => {
+      const nextDropzone = Array.from(splitDropZonePath);
+      nextDropzone[nextDropzone.length - 1] += index + 1;
+      return _addChildByPath(acc, nextDropzone, block);
+    }, newRootBlock.children);
+  }
+
+  return newRootBlock;
+};
+
+export const handleMoveToParentLastChildWithFlat = (
+  rootBlock: Block,
+  splitParentPath: number[],
+  splitItemPath: number[],
+  item: Block
+) => {
+  const newRootBlock = cloneDeep(rootBlock);
+  const initialDropPath = [
+    ...splitParentPath,
+    _find(newRootBlock.children, splitParentPath.slice(1)).children.length,
+  ];
+
+  newRootBlock.children = _removeChildByPath(
+    newRootBlock.children,
+    splitItemPath.slice(1)
+  );
+
+  console.log(`indent: move from ${splitItemPath} to ${initialDropPath}`);
+  newRootBlock.children = _addChildByPath(
+    newRootBlock.children,
+    initialDropPath.slice(1),
+    {
+      ...item,
+      children: [],
+    }
+  );
+
+  newRootBlock.children = item.children.reduce((acc, block, index) => {
+    debugger;
+    const nextDropzone = Array.from(initialDropPath);
+    nextDropzone[nextDropzone.length - 1] += index + 1;
+    console.log(
+      `indent: move from ${[...splitItemPath, index]} to ${nextDropzone}`
+    );
+    return _addChildByPath(acc, nextDropzone.slice(1), block);
+  }, newRootBlock.children);
 
   return newRootBlock;
 };
@@ -68,13 +127,28 @@ export const handleAddBlockByPath = (
 
 export const handleDeleteBlockByPath = (
   rootBlock: Block,
-  splitItemPath: number[]
+  splitItemPath: number[],
+  item: Block,
+  withChildren: boolean
 ) => {
   let newRootBlock = cloneDeep(rootBlock);
   newRootBlock.children = _removeChildByPath(
     newRootBlock.children,
     splitItemPath.slice(1)
   );
+
+  if (!withChildren) {
+    newRootBlock.children = item.children.reduce((acc, block, index) => {
+      debugger;
+      const nextDropzone = Array.from(splitItemPath);
+      nextDropzone[nextDropzone.length - 1] += index;
+      console.log(
+        `indent: move from ${[...splitItemPath, index]} to ${nextDropzone}`
+      );
+      return _addChildByPath(acc, nextDropzone.slice(1), block);
+    }, newRootBlock.children);
+  }
+
   return newRootBlock;
 };
 
@@ -124,6 +198,16 @@ const _updateChildDataByPath = <T extends IHasChildren<T>>(
   };
 
   return updatedChildren;
+};
+
+const _find = <T extends IHasChildren<T>>(list: T[], path: number[]): T => {
+  if (path.length === 1) {
+    return list[path[0]];
+  }
+  const currentStepIndex = Number(path.slice(0, 1));
+  const nextPath = path.slice(1);
+
+  return _find(list[currentStepIndex].children, nextPath);
 };
 
 /**

@@ -27,12 +27,18 @@ interface EditableBlockProps {
   ) => void;
   handleDeleteThis: (
     thisPath: number[],
+    item: Block,
     thisElement: HTMLElement | null
   ) => void;
   handleUpdateWithoutChildren: (thisPath: number[], updateProps: Block) => void;
   handleMoveToPath: (
     dropzonePath: number[],
     { path: itemPath, ...item }: IWithPath<Block>
+  ) => void;
+  handleIndentation: (
+    splitParentPath: number[],
+    splitItemPath: number[],
+    item: Block
   ) => void;
 }
 
@@ -43,8 +49,11 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     handleDeleteThis,
     handleUpdateWithoutChildren,
     handleMoveToPath,
+    handleIndentation,
     path,
   } = props;
+
+  const blockRef = useRef<Block>(block);
 
   const splitedPath = path.split("-").map(Number);
   const contentEditable = useRef<HTMLElement>(null);
@@ -58,6 +67,8 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     if ("text" in block.properties) {
       textValue.current = block.properties.text;
     }
+
+    blockRef.current = block;
   }, [block]);
 
   // contentEditable 에서 텍스트 수정 이벤트 발생시 블록을 업데이트한다
@@ -89,10 +100,29 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     }
     if (key === "Backspace" && textValue.current === "") {
       e.preventDefault();
-      handleDeleteThis(splitedPath, contentEditable.current);
+      if (splitedPath.length <= 2) {
+        handleDeleteThis(
+          splitedPath,
+          blockRef.current,
+          contentEditable.current
+        );
+      } else {
+        const dropPath = splitedPath.slice(0, -1);
+        dropPath[dropPath.length - 1] += 1;
+        console.log(`back-move from: ${path} to ${dropPath}`);
+        handleMoveToPath(dropPath, { path: path, ...blockRef.current });
+      }
     }
 
-    // TODO tab 이벤트 구현
+    if (key === "Tab" && prevKey !== "Shift") {
+      e.preventDefault();
+      if (splitedPath[splitedPath.length - 1] === 0) {
+        return;
+      }
+      const siblingPath = Array.from(splitedPath);
+      siblingPath[siblingPath.length - 1] += -1;
+      handleIndentation(siblingPath, splitedPath, blockRef.current);
+    }
     previousKey.current = key;
   };
 
@@ -112,24 +142,8 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [block, path]
+    [path, block]
   );
-  //   return (
-  //     <div
-  //       ref={drag}
-  //       style={{
-  //         opacity: isDragging ? 0.5 : 1,
-  //         fontSize: 25,
-  //         fontWeight: "bold",
-  //         cursor: "move",
-  //       }}
-  //     >
-  //       ♘
-  //     </div>
-  //   );
-  // };
-
-  // Dragger handler end
 
   let renderElement: ReactElement<any, any> | null = <></>;
   switch (block.type) {
@@ -158,11 +172,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
   return (
     <>
-      <Dropzone
-        path={path}
-        handleMoveToPath={handleMoveToPath}
-        isLastDropzoneOnThisDepth={false}
-      />
+      <Dropzone path={path} handleMoveToPath={handleMoveToPath} />
       <DraggerContainer ref={drag}>{renderElement}</DraggerContainer>
 
       <div style={{ marginLeft: "10px" }}>
@@ -175,12 +185,12 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
             handleDeleteThis={handleDeleteThis}
             handleUpdateWithoutChildren={handleUpdateWithoutChildren}
             handleMoveToPath={handleMoveToPath}
+            handleIndentation={handleIndentation}
           />
         ))}
         <Dropzone
           path={`${path}-${block.children.length}`}
           handleMoveToPath={handleMoveToPath}
-          isLastDropzoneOnThisDepth
         />
       </div>
     </>
