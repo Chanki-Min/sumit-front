@@ -8,6 +8,19 @@ interface IHasChildren<T> {
 export type IWithPath<T extends {}> = T & {
   path: string;
 };
+
+export const findLastChildPath = (
+  block: Block,
+  splitItemPath: number[]
+): string => {
+  if (block.children.length === 0) {
+    return splitItemPath.join("-");
+  }
+
+  const nextPath = [...splitItemPath, block.children.length - 1];
+  return findLastChildPath(block.children[block.children.length - 1], nextPath);
+};
+
 /**
  * 같은 parent block 안에서 drop된 children의 위치를 변경한다
  *
@@ -76,7 +89,7 @@ export const handleMoveToParentLastChildWithFlat = (
   splitParentPath: number[],
   splitItemPath: number[],
   item: Block
-) => {
+): [Block, string] => {
   const newRootBlock = cloneDeep(rootBlock);
   const initialDropPath = [
     ...splitParentPath,
@@ -99,7 +112,6 @@ export const handleMoveToParentLastChildWithFlat = (
   );
 
   newRootBlock.children = item.children.reduce((acc, block, index) => {
-    debugger;
     const nextDropzone = Array.from(initialDropPath);
     nextDropzone[nextDropzone.length - 1] += index + 1;
     console.log(
@@ -108,7 +120,7 @@ export const handleMoveToParentLastChildWithFlat = (
     return _addChildByPath(acc, nextDropzone.slice(1), block);
   }, newRootBlock.children);
 
-  return newRootBlock;
+  return [newRootBlock, initialDropPath.join("-")];
 };
 
 export const handleAddBlockByPath = (
@@ -139,7 +151,6 @@ export const handleDeleteBlockByPath = (
 
   if (!withChildren) {
     newRootBlock.children = item.children.reduce((acc, block, index) => {
-      debugger;
       const nextDropzone = Array.from(splitItemPath);
       nextDropzone[nextDropzone.length - 1] += index;
       console.log(
