@@ -9,6 +9,15 @@ export type IWithPath<T extends {}> = T & {
   path: string;
 };
 
+/**
+ * __PURE__
+ * Block의 rightmost leaf block의 path string을 반환한다
+ *
+ * ex) block(0-2)가 block(0-2-0)을 가지고, block(0-2-0-0)이 있다면 0-2-0-0 반환
+ * @param block 대상 블록
+ * @param splitItemPath  대상 블록의 path string
+ * @returns path string
+ */
 export const findLastChildPath = (
   block: Block,
   splitItemPath: number[]
@@ -16,18 +25,17 @@ export const findLastChildPath = (
   if (block.children.length === 0) {
     return splitItemPath.join("-");
   }
-
   const nextPath = [...splitItemPath, block.children.length - 1];
   return findLastChildPath(block.children[block.children.length - 1], nextPath);
 };
 
 /**
+ * __PURE__
  * 같은 parent block 안에서 drop된 children의 위치를 변경한다
- *
- * @param rootBlock
- * @param splitDropZonePath
- * @param splitItemPath
- * @returns
+ * @param rootBlock root block object
+ * @param splitDropZonePath 이동할 path
+ * @param splitItemPath 현재 path
+ * @returns new root block
  */
 export const handleMoveWithinParent = (
   rootBlock: Block,
@@ -45,13 +53,15 @@ export const handleMoveWithinParent = (
 };
 
 /**
+ * __PURE__
+ * 다른 parent block의 children으로 item을 이동한다
  *
- * @param rootBlock
- * @param splitDropZonePath
- * @param splitItemPath
- * @param item
+ * @param rootBlock root block obj
+ * @param splitDropZonePath 이동할 path
+ * @param splitItemPath 현재 path
+ * @param item 현재 block
  * @param isIndentMode True 일 경우, item의 1차 자식들까지 모두 편입시킨다, 이는 indentation에서 사용 가능하다
- * @returns
+ * @returns new root block
  */
 export const handleMoveToDifferentParent = (
   rootBlock: Block,
@@ -73,6 +83,7 @@ export const handleMoveToDifferentParent = (
     item
   );
 
+  // indentaion이 활성화된 경우, item의 1차 자식들도 위치가 변경된 item의 자식으로 이동시킨다.
   if (isIndentMode) {
     newRootBlock.children = item.children.reduce((acc, block, index) => {
       const nextDropzone = Array.from(splitDropZonePath);
@@ -84,6 +95,15 @@ export const handleMoveToDifferentParent = (
   return newRootBlock;
 };
 
+/**
+ * __PURE__
+ * Right Tab indentation 처리
+ * @param rootBlock
+ * @param splitParentPath
+ * @param splitItemPath
+ * @param item
+ * @returns
+ */
 export const handleMoveToParentLastChildWithFlat = (
   rootBlock: Block,
   splitParentPath: number[],
@@ -101,7 +121,6 @@ export const handleMoveToParentLastChildWithFlat = (
     splitItemPath.slice(1)
   );
 
-  console.log(`indent: move from ${splitItemPath} to ${initialDropPath}`);
   newRootBlock.children = _addChildByPath(
     newRootBlock.children,
     initialDropPath.slice(1),
@@ -123,6 +142,14 @@ export const handleMoveToParentLastChildWithFlat = (
   return [newRootBlock, initialDropPath.join("-")];
 };
 
+/**
+ * 새로운 block을 dropzone에 생성한다
+ *
+ * @param rootBlock
+ * @param splitDropZonePath
+ * @param item
+ * @returns new root block
+ */
 export const handleAddBlockByPath = (
   rootBlock: Block,
   splitDropZonePath: number[],
@@ -153,9 +180,6 @@ export const handleDeleteBlockByPath = (
     newRootBlock.children = item.children.reduce((acc, block, index) => {
       const nextDropzone = Array.from(splitItemPath);
       nextDropzone[nextDropzone.length - 1] += index;
-      console.log(
-        `indent: move from ${[...splitItemPath, index]} to ${nextDropzone}`
-      );
       return _addChildByPath(acc, nextDropzone.slice(1), block);
     }, newRootBlock.children);
   }

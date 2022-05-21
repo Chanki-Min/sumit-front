@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, {
   forwardRef,
   ReactElement,
@@ -20,16 +21,8 @@ import styles from "./EditableBlock.module.scss";
 interface EditableBlockProps {
   block: Block;
   path: string;
-  handleAddSibling: (
-    dropPath: number[],
-    newBlock: Block,
-    thisElement: HTMLElement | null
-  ) => void;
-  handleDeleteThis: (
-    thisPath: number[],
-    item: Block,
-    thisElement: HTMLElement | null
-  ) => void;
+  handleAddSibling: (dropPath: number[], newBlock: Block) => void;
+  handleDeleteThis: (thisPath: number[], item: Block) => void;
   handleUpdateWithoutChildren: (thisPath: number[], updateProps: Block) => void;
   handleMoveToPath: (
     dropzonePath: number[],
@@ -38,7 +31,8 @@ interface EditableBlockProps {
   handleIndentation: (
     splitParentPath: number[],
     splitItemPath: number[],
-    item: Block
+    item: Block,
+    directon: "left" | "right"
   ) => void;
 }
 
@@ -85,27 +79,27 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     }
   };
 
+  // 키보드 입력중 Enter, Tab, Backspace 등의 이벤트를 처리한다
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     const prevKey = previousKey.current;
     //shift enter 지원
     if (key === "Enter" && prevKey !== "Shift") {
       e.preventDefault();
-      console.log("key enter");
+      e.stopPropagation();
+      if (e.nativeEvent.isComposing || e.keyCode === 229) {
+        return; // CJK IME의 Composing issue 수정용도임, ref: https://github.com/vuejs/vue/issues/10277#issuecomment-873337252
+      }
       handleAddSibling(
         getNextPath(splitedPath),
-        getDefaultBlock(block.uuid, block.order + 1),
-        contentEditable.current
+        getDefaultBlock(block.uuid, block.order + 1)
       );
     }
     if (key === "Backspace" && textValue.current === "") {
       e.preventDefault();
+      e.stopPropagation();
       if (splitedPath.length <= 2) {
-        handleDeleteThis(
-          splitedPath,
-          blockRef.current,
-          contentEditable.current
-        );
+        handleDeleteThis(splitedPath, blockRef.current);
       } else {
         const dropPath = splitedPath.slice(0, -1);
         dropPath[dropPath.length - 1] += 1;
@@ -116,12 +110,21 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
     if (key === "Tab" && prevKey !== "Shift") {
       e.preventDefault();
+      e.stopPropagation();
       if (splitedPath[splitedPath.length - 1] === 0) {
         return;
       }
       const siblingPath = Array.from(splitedPath);
       siblingPath[siblingPath.length - 1] += -1;
-      handleIndentation(siblingPath, splitedPath, blockRef.current);
+      handleIndentation(siblingPath, splitedPath, blockRef.current, "right");
+    } else if (key === "Tab" && prevKey === "Shift") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const siblingPath = Array.from(splitedPath).slice(0, -1);
+      siblingPath[siblingPath.length - 1] += +1;
+
+      handleIndentation(siblingPath, splitedPath, blockRef.current, "left");
     }
     previousKey.current = key;
   };
@@ -173,7 +176,9 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   return (
     <>
       <Dropzone path={path} handleMoveToPath={handleMoveToPath} />
-      <DraggerContainer ref={drag}>{renderElement}</DraggerContainer>
+      <DraggerContainer ref={drag} id={`path-${path}`}>
+        {renderElement}
+      </DraggerContainer>
 
       <div style={{ marginLeft: "10px" }}>
         {block.children.map((cb, index) => (
@@ -237,7 +242,7 @@ const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
 
     return (
       <ContentEditable
-        className={styles.plain_text}
+        className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="p"
         onChange={onChange}
