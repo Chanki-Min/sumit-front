@@ -1,5 +1,7 @@
-import { useDrop } from "react-dnd";
-import styled from "styled-components";
+import classNames from "classnames";
+import { useEffect } from "react";
+import { useDrop, XYCoord } from "react-dnd";
+import styled, { css } from "styled-components";
 import { Block, isSidebarBlock, SidebarBlock } from "../../../models/block";
 import { handleAddBlockByPath, IWithPath } from "../../../tree/tree";
 
@@ -9,6 +11,7 @@ export const ItemTypes = {
 } as const;
 
 interface DropzoneProps {
+  isLast?: boolean;
   path: string;
   handleMoveToPath: (
     dropzonePath: number[],
@@ -18,6 +21,7 @@ interface DropzoneProps {
 }
 
 const Dropzone: React.FC<DropzoneProps> = ({
+  isLast,
   path,
   handleMoveToPath,
   handleAddBlock,
@@ -76,6 +80,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
       },
       collect: (monitor) => ({
         isOver: !!monitor?.isOver(),
+        // offset: monitor?.get(),
         canDrop: !!monitor?.canDrop(),
       }),
     }),
@@ -85,17 +90,24 @@ const Dropzone: React.FC<DropzoneProps> = ({
   const isActive = isOver && canDrop;
 
   return (
-    <DropzoneContaier ref={drop} isActive={isActive}>
-      {path}
-    </DropzoneContaier>
+    <DropzoneContaier
+      className={classNames("dropzone", path, { isLast: isLast })}
+      path={path}
+      ref={drop}
+      isActive={isActive}
+    ></DropzoneContaier>
   );
 };
 
-const DropzoneContaier = styled.div<{ isActive: boolean }>`
+const DropzoneContaier = styled.div<{ isActive: boolean; path: string }>`
   width: calc(100% - 18px);
-  height: 20px;
-  background-color: ${(p) => (p.isActive ? "blue" : "green")};
-  margin: 0 0 5px 18px;
+  height: 8px;
+  background-color: ${(p) => (p.isActive ? "blue" : "transparent")};
+  margin: 0 0 0 18px;
+  position: absolute;
+  top: -4px;
+  z-index: ${(p) => (p.isActive ? 100 : p.path.length)};
+  z-index: ${(p) => p.path.length};
 `;
 
 export default Dropzone;

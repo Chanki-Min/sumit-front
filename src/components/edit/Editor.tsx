@@ -26,17 +26,9 @@ const initialBlock: Block = {
     {
       uuid: uuidv4(),
       type: "plain_text",
-      properties: { text: "hello sumit!" },
+      properties: { text: "" },
       parent: null,
       order: 0,
-      children: [],
-    },
-    {
-      uuid: uuidv4(),
-      type: "plain_text",
-      properties: { text: "get some childhood" },
-      parent: null,
-      order: 1,
       children: [],
     },
   ],

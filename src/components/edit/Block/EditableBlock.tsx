@@ -9,6 +9,7 @@ import React, {
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { useDrag } from "react-dnd";
 import styled from "styled-components";
+import { PLACEHOLDER } from "../../../Contstants";
 import { Block, SidebarBlock } from "../../../models/block";
 import { plain_text_props } from "../../../models/properties";
 import { IWithPath } from "../../../tree/tree";
@@ -165,7 +166,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       break;
 
     case "root_block":
-      renderElement = <>root_block</>;
+      renderElement = <></>;
       break;
     default:
       renderElement = (
@@ -176,18 +177,9 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       );
   }
 
-  return (
-    <>
-      <Dropzone
-        path={path}
-        handleMoveToPath={handleMoveToPath}
-        handleAddBlock={handleAddBlock}
-      />
-      <DraggerContainer ref={drag} id={`path-${path}`}>
-        {renderElement}
-      </DraggerContainer>
-
-      <div style={{ marginLeft: "10px" }}>
+  if (block.type === "root_block") {
+    return (
+      <div>
         {block.children.map((cb, index) => (
           <EditableBlock
             path={`${path}-${index}`}
@@ -200,11 +192,48 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
             handleIndentation={handleIndentation}
           />
         ))}
+        <div style={{ position: "relative" }}>
+          <Dropzone
+            path={`${path}-${block.children.length}`}
+            handleMoveToPath={handleMoveToPath}
+            handleAddBlock={handleAddBlock}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div style={{ position: "relative" }}>
         <Dropzone
-          path={`${path}-${block.children.length}`}
+          path={path}
           handleMoveToPath={handleMoveToPath}
           handleAddBlock={handleAddBlock}
         />
+        <DraggerContainer ref={drag} id={`path-${path}`}>
+          {renderElement}
+        </DraggerContainer>
+
+        <div style={{ marginLeft: "15px", position: "relative" }}>
+          {block.children.map((cb, index) => (
+            <EditableBlock
+              path={`${path}-${index}`}
+              key={`${path}-${index}-${cb.uuid}`}
+              block={cb}
+              handleAddBlock={handleAddBlock}
+              handleDeleteThis={handleDeleteThis}
+              handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+              handleMoveToPath={handleMoveToPath}
+              handleIndentation={handleIndentation}
+            />
+          ))}
+          <Dropzone
+            path={`${path}-${block.children.length}`}
+            handleMoveToPath={handleMoveToPath}
+            handleAddBlock={handleAddBlock}
+          />
+        </div>
       </div>
     </>
   );
@@ -218,9 +247,11 @@ interface RenderderProps {
 }
 
 const DraggerContainer = styled.div`
+  position: relative;
   display: flex;
   justify-content: stretch;
   width: 100%;
+  padding: 4px 0;
 
   * {
     flex: 1 1;
@@ -253,6 +284,7 @@ const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
         className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="p"
+        placeholder={PLACEHOLDER}
         onChange={onChange}
         // innerRef={ref ?? undefined}
         onKeyDown={onKeyDown}

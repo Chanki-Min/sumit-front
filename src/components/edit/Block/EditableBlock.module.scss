@@ -1,4 +1,8 @@
 .plain_text {
-  border: 1px solid gray;
+  border: none;
   margin: 0;
+
+  &:focus {
+    outline: none;
+  }
 }
