@@ -8,6 +8,7 @@ import {
   handleAddBlockByPath,
   handleDeleteBlockByPath,
   handleMoveToDifferentParent,
+  handleMoveToDropzoneWithUnderSiblingToItemChild,
   handleMoveToParentLastChildWithFlat,
   handleMoveWithinParent,
   IWithPath,
@@ -170,13 +171,20 @@ const Editor: React.FC = () => {
     } else {
       // left tab의 경우, 나를 dropzone에 떨구고, 내 형제들을 모두 내 자식으로 편입시킨다
       // TODO: left tab은 내 형제를 내 마지막 자식 다음으로 편입해야 한다
-      debugger;
+
       const dropPath = Array.from(splitParentPath);
       // dropPath[dropPath.length - 1];
-      handleMoveToPath(dropPath, {
-        ...item,
-        path: splitItemPath.join("-"),
-      });
+      const nextRootBlock = handleMoveToDropzoneWithUnderSiblingToItemChild(
+        rootBlockRef.current,
+        dropPath,
+        splitItemPath,
+        item
+      );
+      setRootBlock(nextRootBlock);
+      // handleMoveToPath(dropPath, {
+      //   ...item,
+      //   path: splitItemPath.join("-"),
+      // });
     }
   };
   return (

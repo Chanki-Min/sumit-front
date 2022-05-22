@@ -143,6 +143,61 @@ export const handleMoveToParentLastChildWithFlat = (
 };
 
 /**
+ * Left intentation 처리, item을 splitDropzonePath로 이동시키고, item의 형제 sibling 중 item보다 아래에 있는 block들을 item의 자식으로 이동한다
+ * @param rootBlock
+ * @param splitDropPath
+ * @param splitItemPath
+ * @param item
+ */
+export const handleMoveToDropzoneWithUnderSiblingToItemChild = (
+  rootBlock: Block,
+  splitDropZonePath: number[],
+  splitItemPath: number[],
+  item: Block
+) => {
+  const newRootBlock = cloneDeep(rootBlock);
+  const parentBlock = _find(newRootBlock.children, splitItemPath.slice(1, -1));
+
+  const underSiblingBlocksWithPath: IWithPath<Block>[] = parentBlock.children
+    .slice(splitItemPath[splitItemPath.length - 1] + 1)
+    .map((sb, index) => {
+      const sbPath = Array.from(splitItemPath);
+      sbPath[sbPath.length - 1] += index; // reduce 절차때는 item이 삭제되었음을 고려해여 +1을 하지 않는다
+      return {
+        ...sb,
+        path: sbPath.join("-"),
+      };
+    });
+
+  newRootBlock.children = _removeChildByPath(
+    newRootBlock.children,
+    splitItemPath.slice(1)
+  );
+
+  newRootBlock.children = _addChildByPath(
+    newRootBlock.children,
+    splitDropZonePath.slice(1),
+    item
+  );
+
+  // 형제 sibling 이동
+  const initialDropPath = [...splitDropZonePath, item.children.length];
+  newRootBlock.children = underSiblingBlocksWithPath.reduce(
+    (acc, block, index) => {
+      const splitSiblingPath = block.path.split("-").map(Number);
+      const siblingDropPath = [...initialDropPath];
+      siblingDropPath[siblingDropPath.length - 1] += index;
+      acc = _removeChildByPath(acc, splitSiblingPath.slice(1));
+      acc = _addChildByPath(acc, siblingDropPath.slice(1), block);
+      return acc;
+    },
+    newRootBlock.children
+  );
+
+  return newRootBlock;
+};
+
+/**
  * 새로운 block을 dropzone에 생성한다
  *
  * @param rootBlock

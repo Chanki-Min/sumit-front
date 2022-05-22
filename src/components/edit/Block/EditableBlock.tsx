@@ -121,10 +121,10 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       e.preventDefault();
       e.stopPropagation();
 
-      const siblingPath = Array.from(splitedPath).slice(0, -1);
-      siblingPath[siblingPath.length - 1] += +1;
+      const dropPath = Array.from(splitedPath).slice(0, -1);
+      dropPath[dropPath.length - 1] += +1;
 
-      handleIndentation(siblingPath, splitedPath, blockRef.current, "left");
+      handleIndentation(dropPath, splitedPath, blockRef.current, "left");
     }
     previousKey.current = key;
   };
