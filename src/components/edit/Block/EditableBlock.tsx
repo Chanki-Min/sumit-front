@@ -203,6 +203,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     );
   }
 
+  // TODO: css 고치기 (너무 inline style에 의존하는데, 고쳐야 합니다)
   return (
     <>
       <div style={{ position: "relative" }}>
