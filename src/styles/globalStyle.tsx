@@ -21,6 +21,12 @@ const GlobalStyle = createGlobalStyle`
     #__next {
         height: 100%;
     }
+
+    [contenteditable=true]:empty:before {
+        content: attr(placeholder);
+        display: block;
+        color: #aaa;
+    }
 `;
 
 export default GlobalStyle;
