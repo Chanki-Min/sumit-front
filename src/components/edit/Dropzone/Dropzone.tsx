@@ -1,10 +1,11 @@
 import { useDrop } from "react-dnd";
 import styled from "styled-components";
-import { Block } from "../../../models/block";
-import { IWithPath } from "../../../tree/tree";
+import { Block, isSidebarBlock, SidebarBlock } from "../../../models/block";
+import { handleAddBlockByPath, IWithPath } from "../../../tree/tree";
 
 export const ItemTypes = {
   BLOCK: "block",
+  SIDEBAR_BLOCK: "sidebar_block",
 } as const;
 
 interface DropzoneProps {
@@ -13,20 +14,31 @@ interface DropzoneProps {
     dropzonePath: number[],
     { path: itemPath, ...item }: IWithPath<Block>
   ) => void;
+  handleAddBlock: (dropPath: number[], newBlock: Block) => void;
 }
 
-const Dropzone: React.FC<DropzoneProps> = ({ path, handleMoveToPath }) => {
+const Dropzone: React.FC<DropzoneProps> = ({
+  path,
+  handleMoveToPath,
+  handleAddBlock,
+}) => {
   const splitDropzonePath: number[] = path.split("-").map(Number);
 
   const [{ isOver, canDrop }, drop] = useDrop<
-    IWithPath<Block>,
+    IWithPath<Block> | SidebarBlock,
     unknown, // drop function 의 반환 결과는 사용하지 않는다
     { isOver: boolean; canDrop: boolean }
   >(
     () => ({
-      accept: ItemTypes.BLOCK,
+      accept: [ItemTypes.BLOCK, ItemTypes.SIDEBAR_BLOCK],
 
-      canDrop: ({ path: itemPath, ...block }, monitor) => {
+      canDrop: (blockWithPathOrSidebarBlock, monitor) => {
+        const itemType = monitor.getItemType();
+        if (itemType === ItemTypes.SIDEBAR_BLOCK) {
+          return true; // 사이드바에서 끌어온 블록은 항상 허용한다
+        }
+        const itemPath = (blockWithPathOrSidebarBlock as IWithPath<Block>).path;
+
         // Dropzone이 item과 같거나, 내부에 있다면 drop할 수 없다
         if (path.startsWith(itemPath)) {
           return false;
@@ -47,9 +59,20 @@ const Dropzone: React.FC<DropzoneProps> = ({ path, handleMoveToPath }) => {
         // 나머지 모든 경우는 Drop 가능하다
         return true;
       },
-      drop: (blockWithPath: IWithPath<Block>) => {
+      drop: (
+        blockWithPathOrSidebarBlock: IWithPath<Block> | SidebarBlock,
+        monitor
+      ) => {
         console.log("dropping to path:", path);
-        handleMoveToPath(splitDropzonePath, blockWithPath);
+        if (isSidebarBlock(blockWithPathOrSidebarBlock)) {
+          handleAddBlock(splitDropzonePath, {
+            ...blockWithPathOrSidebarBlock,
+            order: splitDropzonePath[splitDropzonePath.length - 1],
+            parent: null,
+          } as Block);
+        } else {
+          handleMoveToPath(splitDropzonePath, blockWithPathOrSidebarBlock);
+        }
       },
       collect: (monitor) => ({
         isOver: !!monitor?.isOver(),

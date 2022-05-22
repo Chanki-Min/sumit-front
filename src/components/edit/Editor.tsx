@@ -1,4 +1,4 @@
-import { Block } from "../../models/block";
+import { Block, SidebarBlock } from "../../models/block";
 import { v4 as uuidv4 } from "uuid";
 import EditableBlock from "./Block/EditableBlock";
 import { useEffect, useRef, useState } from "react";
@@ -13,8 +13,6 @@ import {
   handleMoveWithinParent,
   IWithPath,
 } from "../../tree/tree";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { setCaretToEnd } from "../../tree/treeUtil";
 
 const initialBlock: Block = {
@@ -65,7 +63,7 @@ const Editor: React.FC = () => {
   }, [rootBlock]);
 
   // enter 키 등 블록을 추가할때 실행한다
-  const handleAddSibling = (dropPath: number[], newBlock: Block) => {
+  const handleAddBlock = (dropPath: number[], newBlock: Block) => {
     const newRootBlock = handleAddBlockByPath(
       rootBlockRef.current,
       dropPath,
@@ -189,32 +187,17 @@ const Editor: React.FC = () => {
   };
   return (
     <div id="slide">
-      <DndProvider backend={HTML5Backend}>
-        <EditableBlock
-          path="0"
-          block={rootBlock}
-          handleAddSibling={handleAddSibling}
-          handleDeleteThis={handleDeleteThis}
-          handleUpdateWithoutChildren={handleUpdateWithoutChildren}
-          handleMoveToPath={handleMoveToPath}
-          handleIndentation={handleIndentation}
-        />
-      </DndProvider>
+      <EditableBlock
+        path="0"
+        block={rootBlock}
+        handleAddBlock={handleAddBlock}
+        handleDeleteThis={handleDeleteThis}
+        handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+        handleMoveToPath={handleMoveToPath}
+        handleIndentation={handleIndentation}
+      />
     </div>
   );
-};
-
-export const getDefaultBlock = (parent: string, myIndex: number): Block => {
-  return {
-    uuid: uuidv4(),
-    type: "plain_text",
-    properties: {
-      text: "",
-    },
-    children: [],
-    order: myIndex,
-    parent: parent,
-  };
 };
 
 export default Editor;

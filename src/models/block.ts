@@ -9,3 +9,15 @@ export type Block = BlockProperty & {
 
   parent: string | null;
 };
+
+export type SidebarBlock = Omit<Block, "order" | "parent">;
+
+export function isSidebarBlock(obj: any): obj is SidebarBlock {
+  return (
+    typeof obj === "object" &&
+    typeof obj["uuid"] === "string" &&
+    typeof obj["order"] === "undefined" &&
+    typeof obj["parent"] === "undefined" &&
+    Array.isArray(obj["children"])
+  );
+}

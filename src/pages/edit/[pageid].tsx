@@ -4,6 +4,8 @@ import {
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
 import { useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
 import BlockDraggerSidebar from "../../components/edit/BlockDraggerSiderbar";
 import Editor from "../../components/edit/Editor";
@@ -28,13 +30,15 @@ const EditPage = ({ user }: PageProps) => {
         setRightBarvisible={setShowRightSidebar}
       />
 
-      <SliderParent>
-        <SlidesSelectionSidebar visible={showLeftSidebar} />
-        <EditArea>
-          <Editor />
-        </EditArea>
-        <BlockDraggerSidebar visible={showRightSidebar} />
-      </SliderParent>
+      <DndProvider backend={HTML5Backend}>
+        <SliderParent>
+          <SlidesSelectionSidebar visible={showLeftSidebar} />
+          <EditArea>
+            <Editor />
+          </EditArea>
+          <BlockDraggerSidebar visible={showRightSidebar} />
+        </SliderParent>
+      </DndProvider>
     </>
   );
 };

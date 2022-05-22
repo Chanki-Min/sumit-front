@@ -12,6 +12,8 @@ export type BlockProperty =
   | simple_margin_props
   | grid_props;
 
+export type BlockTypes = BlockProperty["type"];
+
 export interface root_block_props {
   type: "root_block";
   properties: {};

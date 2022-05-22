@@ -9,19 +9,18 @@ import React, {
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { useDrag } from "react-dnd";
 import styled from "styled-components";
-import { Block } from "../../../models/block";
+import { Block, SidebarBlock } from "../../../models/block";
 import { plain_text_props } from "../../../models/properties";
 import { IWithPath } from "../../../tree/tree";
-import { getNextPath } from "../../../tree/treeUtil";
+import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
-import { getDefaultBlock } from "../Editor";
 
 import styles from "./EditableBlock.module.scss";
 
 interface EditableBlockProps {
   block: Block;
   path: string;
-  handleAddSibling: (dropPath: number[], newBlock: Block) => void;
+  handleAddBlock: (dropPath: number[], newBlock: Block) => void;
   handleDeleteThis: (thisPath: number[], item: Block) => void;
   handleUpdateWithoutChildren: (thisPath: number[], updateProps: Block) => void;
   handleMoveToPath: (
@@ -39,7 +38,7 @@ interface EditableBlockProps {
 const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   const {
     block,
-    handleAddSibling,
+    handleAddBlock,
     handleDeleteThis,
     handleUpdateWithoutChildren,
     handleMoveToPath,
@@ -90,9 +89,13 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       if (e.nativeEvent.isComposing || e.keyCode === 229) {
         return; // CJK IME의 Composing issue 수정용도임, ref: https://github.com/vuejs/vue/issues/10277#issuecomment-873337252
       }
-      handleAddSibling(
-        getNextPath(splitedPath),
-        getDefaultBlock(block.uuid, block.order + 1)
+      const nextPath = getNextPath(splitedPath);
+      handleAddBlock(
+        nextPath,
+        getBlockPrototype("plain_text", {
+          order: nextPath[nextPath.length - 1],
+          parent: block.parent,
+        })
       );
     }
     if (key === "Backspace" && textValue.current === "") {
@@ -175,7 +178,11 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
   return (
     <>
-      <Dropzone path={path} handleMoveToPath={handleMoveToPath} />
+      <Dropzone
+        path={path}
+        handleMoveToPath={handleMoveToPath}
+        handleAddBlock={handleAddBlock}
+      />
       <DraggerContainer ref={drag} id={`path-${path}`}>
         {renderElement}
       </DraggerContainer>
@@ -186,7 +193,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
             path={`${path}-${index}`}
             key={`${path}-${index}-${cb.uuid}`}
             block={cb}
-            handleAddSibling={handleAddSibling}
+            handleAddBlock={handleAddBlock}
             handleDeleteThis={handleDeleteThis}
             handleUpdateWithoutChildren={handleUpdateWithoutChildren}
             handleMoveToPath={handleMoveToPath}
@@ -196,6 +203,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         <Dropzone
           path={`${path}-${block.children.length}`}
           handleMoveToPath={handleMoveToPath}
+          handleAddBlock={handleAddBlock}
         />
       </div>
     </>
