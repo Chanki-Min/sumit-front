@@ -1,6 +1,6 @@
-import { BlockProperty } from "./properties";
+import { BlockFields } from "./properties";
 
-export type Block = BlockProperty & {
+export type Block = BlockFields & {
   uuid: string;
 
   children: Block[]; // 문제점: Typeorm 에서 children의 순서를 지정하기 어려움

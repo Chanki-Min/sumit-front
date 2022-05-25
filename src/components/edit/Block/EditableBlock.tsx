@@ -5,13 +5,18 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { useDrag } from "react-dnd";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { PLACEHOLDER } from "../../../Contstants";
 import { Block, SidebarBlock } from "../../../models/block";
-import { plain_text_props } from "../../../models/properties";
+import {
+  BlockProperties,
+  plain_text_props,
+  to_do_list_props,
+} from "../../../models/properties";
 import { IWithPath } from "../../../tree/tree";
 import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
@@ -66,17 +71,16 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   }, [block]);
 
   // contentEditable 에서 텍스트 수정 이벤트 발생시 블록을 업데이트한다
-  const handleContentEditableChange = (e: ContentEditableEvent) => {
+  const handlePropertyChange = (newProps: BlockProperties) => {
     // text field가 존재할때만 블록을 업데이트한다
-    if ("text" in block.properties) {
-      handleUpdateWithoutChildren(splitedPath, {
-        ...block,
-        properties: {
-          ...block.properties,
-          text: e.target.value,
-        },
-      } as Block);
-    }
+
+    handleUpdateWithoutChildren(splitedPath, {
+      ...block,
+      properties: {
+        ...block.properties,
+        ...newProps,
+      },
+    } as Block);
   };
 
   // 키보드 입력중 Enter, Tab, Backspace 등의 이벤트를 처리한다
@@ -93,7 +97,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       const nextPath = getNextPath(splitedPath);
       handleAddBlock(
         nextPath,
-        getBlockPrototype("plain_text", {
+        getBlockPrototype(block.type, {
           order: nextPath[nextPath.length - 1],
           parent: block.parent,
         })
@@ -158,13 +162,22 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       renderElement = (
         <RenderPlainText
           block={block}
-          onChange={handleContentEditableChange}
+          onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
           // ref={contentEditable}
         />
       );
       break;
-
+    case "to_do_list":
+      renderElement = (
+        <RenderTodo
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          ref={contentEditable}
+        />
+      );
+      break;
     case "root_block":
       renderElement = <></>;
       break;
@@ -243,7 +256,7 @@ export default EditableBlock;
 
 interface RenderderProps {
   block: Block;
-  onChange: (e: ContentEditableEvent) => void;
+  onChange: (newProps: BlockProperties) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
@@ -280,13 +293,20 @@ const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
   function RenderPlainText({ block, onChange, onKeyDown }, ref) {
     const prop = block as plain_text_props;
 
+    const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if ("text" in block.properties) {
+        onChange({
+          text: e.target.value,
+        });
+      }
+    };
     return (
       <ContentEditable
         className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="p"
         placeholder={PLACEHOLDER}
-        onChange={onChange}
+        onChange={forwardContentEditableChange}
         // innerRef={ref ?? undefined}
         onKeyDown={onKeyDown}
       />
@@ -294,18 +314,63 @@ const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
   }
 );
 
-// const RenderTodo: React.FC<EditableBlockProps> = ({ block }) => {
-//   const prop = block as to_do_list_props;
+const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
+  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+    const prop = block as plain_text_props;
 
-//   const [checked, setChecked] = useState<boolean>(prop.properties.checked);
-//   const toggleChecked = () => setChecked(!checked);
+    const forwardCheck = () => {
+      if ("checked" in block.properties) {
+        onChange({
+          checked: !block.properties.checked,
+        });
+      }
+    };
 
-//   return (
-//     <>
-//       <div onClick={toggleChecked}>
-//         <button style={{ minHeight: "5px" }}>{checked ? "V" : " "}</button>{" "}
-//         {prop.properties.text}
-//       </div>
-//     </>
-//   );
-// };
+    const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if ("text" in block.properties) {
+        onChange({
+          text: e.target.value,
+        });
+      }
+    };
+
+    if ("checked" in block.properties) {
+      return (
+        <>
+          {/* <div onClick={forwardCheck}>
+            {block.properties.checked.toString()}
+          </div> */}
+          <TickBox $checked={block.properties.checked} onClick={forwardCheck} />
+          <ContentEditable
+            className={classNames(styles.plain_text, "focusable")}
+            html={prop.properties.text}
+            tagName="p"
+            placeholder={PLACEHOLDER}
+            onChange={forwardContentEditableChange}
+            // innerRef={ref ?? undefined}
+            onKeyDown={onKeyDown}
+          />
+        </>
+      );
+    }
+
+    return <></>;
+  }
+);
+
+const TickBox = styled.div<{ $checked: boolean }>`
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  border-radius: 3px;
+  border: 0.5px solid black;
+  margin-right: 4px;
+
+  ${(p) =>
+    p.$checked &&
+    css`
+      background-image: url("/img/sidebarIcons/tick-box.svg");
+      background-size: 20px;
+      border: none;
+    `}
+`;

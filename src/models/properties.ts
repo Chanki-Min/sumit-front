@@ -1,4 +1,4 @@
-export type BlockProperty =
+export type BlockFields =
   | root_block_props
   | plain_text_props
   | heading_props
@@ -12,7 +12,9 @@ export type BlockProperty =
   | simple_margin_props
   | grid_props;
 
-export type BlockTypes = BlockProperty["type"];
+export type BlockTypes = BlockFields["type"];
+
+export type BlockProperties = BlockFields["properties"];
 
 export interface root_block_props {
   type: "root_block";

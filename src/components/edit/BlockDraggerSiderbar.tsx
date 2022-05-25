@@ -5,6 +5,7 @@ import { useDrag } from "react-dnd";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import { Block, SidebarBlock } from "../../models/block";
+import { BlockTypes } from "../../models/properties";
 import { Slider } from "../../styles/Sidebar";
 
 import { getBlockPrototype } from "../../tree/treeUtil";
@@ -21,6 +22,13 @@ const BlockDraggerSidebar: React.FC<Props> = ({ visible }) => {
         title="텍스트"
         desc="기본 텍스트를 사용해 내용을 작성하세요"
         iconSrc="/img/sidebarIcons/plain_text.svg"
+        blockType="plain_text"
+      />
+      <SidebarElement
+        title="to-do 리스트"
+        desc="to-do 리스트로 진행사항을 정리하세요"
+        iconSrc="/img/sidebarIcons/list-check-solid.svg"
+        blockType="to_do_list"
       />
     </Slider>
   );
@@ -42,12 +50,14 @@ interface SidebarElementProps {
   title: string;
   desc: string;
   iconSrc: string;
+  blockType: BlockTypes;
 }
 
 const SidebarElement: React.FC<SidebarElementProps> = ({
   title,
   desc,
   iconSrc,
+  blockType,
 }) => {
   const [{ isDragging }, drag] = useDrag<
     SidebarBlock,
@@ -55,7 +65,7 @@ const SidebarElement: React.FC<SidebarElementProps> = ({
     { isDragging: boolean }
   >(() => ({
     type: ItemTypes.SIDEBAR_BLOCK,
-    item: getBlockPrototype("plain_text", undefined),
+    item: getBlockPrototype(blockType, undefined),
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),

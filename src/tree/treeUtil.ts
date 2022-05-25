@@ -1,4 +1,4 @@
-import { BlockProperty, BlockTypes } from "../models/properties";
+import { BlockFields, BlockTypes } from "../models/properties";
 import { v4 as uuidv4 } from "uuid";
 
 import { Block, SidebarBlock } from "../models/block";
@@ -110,6 +110,30 @@ export function getBlockPrototype(
           type: "plain_text",
           properties: {
             text: "",
+          },
+          children: [],
+        };
+      }
+    case "to_do_list":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "to_do_list",
+          properties: {
+            text: "",
+            checked: false,
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "to_do_list",
+          properties: {
+            text: "",
+            checked: false,
           },
           children: [],
         };
