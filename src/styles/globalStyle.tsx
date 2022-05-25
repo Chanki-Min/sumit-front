@@ -22,7 +22,7 @@ const GlobalStyle = createGlobalStyle`
         height: 100%;
     }
 
-    [contenteditable=true]:empty:before {
+    [contenteditable=true]:empty:focus:before{
         content: attr(placeholder);
         display: block;
         color: #aaa;

@@ -38,7 +38,7 @@ const Editor: React.FC = () => {
   const [rootBlock, setRootBlock] = useState<Block>(initialBlock);
 
   const rootBlockRef = useRef<Block>(rootBlock); // handler function의 closure는 이전 상태를 바라볼 수 있으므로 ref로 수정한다.
-  const nextFocusPathOrNull = useRef<string | null>(null);
+  const nextFocusPathOrNull = useRef<string | null>("0-0");
 
   // rootBlockRef를 최신화하고, 포커스를 처리한다
   useEffect(() => {
