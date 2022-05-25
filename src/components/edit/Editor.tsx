@@ -160,21 +160,19 @@ const Editor: React.FC = () => {
       setRootBlock(newRootBlock);
     } else {
       // left tab의 경우, 나를 dropzone에 떨구고, 내 형제들을 모두 내 자식으로 편입시킨다
-      // TODO: left tab은 내 형제를 내 마지막 자식 다음으로 편입해야 한다
-
       const dropPath = Array.from(splitParentPath);
-      // dropPath[dropPath.length - 1];
+      //  예외 상항 (더 이상 왼쪽으로 이동할 수 없는 경우) 무시한다
+      if (dropPath.length < 2 || dropPath[0] === 1) {
+        return;
+      }
       const nextRootBlock = handleMoveToDropzoneWithUnderSiblingToItemChild(
         rootBlockRef.current,
         dropPath,
         splitItemPath,
         item
       );
+      nextFocusPathOrNull.current = dropPath.join("-");
       setRootBlock(nextRootBlock);
-      // handleMoveToPath(dropPath, {
-      //   ...item,
-      //   path: splitItemPath.join("-"),
-      // });
     }
   };
   return (

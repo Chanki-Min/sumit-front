@@ -14,12 +14,15 @@ import { PLACEHOLDER } from "../../../Contstants";
 import { Block, SidebarBlock } from "../../../models/block";
 import {
   BlockProperties,
+  BlockTypes,
   plain_text_props,
   to_do_list_props,
 } from "../../../models/properties";
+import { DraggerContainer } from "../../../styles/Block";
 import { IWithPath } from "../../../tree/tree";
 import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
+import { RenderPlainText, RenderTodo } from "./BlockImpl";
 
 import styles from "./EditableBlock.module.scss";
 
@@ -70,7 +73,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     blockRef.current = block;
   }, [block]);
 
-  // contentEditable 에서 텍스트 수정 이벤트 발생시 블록을 업데이트한다
+  // 블록 속성 변경 핸들러
   const handlePropertyChange = (newProps: BlockProperties) => {
     // text field가 존재할때만 블록을 업데이트한다
 
@@ -253,124 +256,3 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   );
 };
 export default EditableBlock;
-
-interface RenderderProps {
-  block: Block;
-  onChange: (newProps: BlockProperties) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
-}
-
-const DraggerContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: stretch;
-  width: 100%;
-  padding: 4px 0;
-
-  * {
-    flex: 1 1;
-  }
-
-  &::before {
-    display: inline-block;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    font: var(--fa-font-solid);
-    content: "\f550";
-
-    visibility: hidden;
-    flex: 0 0;
-    margin: 4px 3px 0 0;
-  }
-
-  &:focus-within::before {
-    visibility: visible;
-    content: "\f550";
-  }
-`;
-
-const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
-  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
-    const prop = block as plain_text_props;
-
-    const forwardContentEditableChange = (e: ContentEditableEvent) => {
-      if ("text" in block.properties) {
-        onChange({
-          text: e.target.value,
-        });
-      }
-    };
-    return (
-      <ContentEditable
-        className={classNames(styles.plain_text, "focusable")}
-        html={prop.properties.text}
-        tagName="p"
-        placeholder={PLACEHOLDER}
-        onChange={forwardContentEditableChange}
-        // innerRef={ref ?? undefined}
-        onKeyDown={onKeyDown}
-      />
-    );
-  }
-);
-
-const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
-  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
-    const prop = block as plain_text_props;
-
-    const forwardCheck = () => {
-      if ("checked" in block.properties) {
-        onChange({
-          checked: !block.properties.checked,
-        });
-      }
-    };
-
-    const forwardContentEditableChange = (e: ContentEditableEvent) => {
-      if ("text" in block.properties) {
-        onChange({
-          text: e.target.value,
-        });
-      }
-    };
-
-    if ("checked" in block.properties) {
-      return (
-        <>
-          {/* <div onClick={forwardCheck}>
-            {block.properties.checked.toString()}
-          </div> */}
-          <TickBox $checked={block.properties.checked} onClick={forwardCheck} />
-          <ContentEditable
-            className={classNames(styles.plain_text, "focusable")}
-            html={prop.properties.text}
-            tagName="p"
-            placeholder={PLACEHOLDER}
-            onChange={forwardContentEditableChange}
-            // innerRef={ref ?? undefined}
-            onKeyDown={onKeyDown}
-          />
-        </>
-      );
-    }
-
-    return <></>;
-  }
-);
-
-const TickBox = styled.div<{ $checked: boolean }>`
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
-  border-radius: 3px;
-  border: 0.5px solid black;
-  margin-right: 4px;
-
-  ${(p) =>
-    p.$checked &&
-    css`
-      background-image: url("/img/sidebarIcons/tick-box.svg");
-      background-size: 20px;
-      border: none;
-    `}
-`;
