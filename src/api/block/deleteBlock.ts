@@ -29,9 +29,14 @@ interface DeleteBlockProps {
 export function useDeleteBlockMutation() {
   const queryClient = useQueryClient();
 
-  return useMutation<DeleteBlockProps, AxiosError, DeleteBlockProps, unknown>(
+  return useMutation<DeleteBlockProps, AxiosError, DeleteBlockProps, Block>(
     deleteBlock,
     {
+      onMutate: (props) => {
+        return queryClient.getQueryData<Block>(
+          blockKeys.detail(props.rootBlockId)
+        ) as Block;
+      },
       onSuccess: async (props) => {
         const queryKey = blockKeys.detail(props.rootBlockId);
 
