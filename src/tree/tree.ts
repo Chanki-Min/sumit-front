@@ -67,8 +67,7 @@ export const handleMoveToDifferentParent = (
   rootBlock: Block,
   splitDropZonePath: number[],
   splitItemPath: number[],
-  item: Block,
-  isIndentMode: boolean = false
+  item: Block
 ) => {
   const newRootBlock = cloneDeep(rootBlock);
 
@@ -82,15 +81,6 @@ export const handleMoveToDifferentParent = (
     splitDropZonePath.slice(1),
     item
   );
-
-  // indentaion이 활성화된 경우, item의 1차 자식들도 위치가 변경된 item의 자식으로 이동시킨다.
-  if (isIndentMode) {
-    newRootBlock.children = item.children.reduce((acc, block, index) => {
-      const nextDropzone = Array.from(splitDropZonePath);
-      nextDropzone[nextDropzone.length - 1] += index + 1;
-      return _addChildByPath(acc, nextDropzone, block);
-    }, newRootBlock.children);
-  }
 
   return newRootBlock;
 };
