@@ -3,13 +3,13 @@ import {
   UserProfile,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
-import fetchPages from "../api/fetchPage";
 import { Page } from "../models/page";
 
 import { Container, Grid, Image, Segment } from "semantic-ui-react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import Link from "next/link";
+import { fetchPages } from "../api/page/fetchPage";
 
 interface DashboardProps {
   user?: UserProfile;
@@ -50,7 +50,7 @@ export const getServerSideProps = withPageAuthRequired<DashboardProps>({
   async getServerSideProps(context) {
     // Getting user data from Auth0
     const user = getSession(context.req, context.res)?.user;
-    const pages = await fetchPages({ withSlides: false });
+    const pages = await fetchPages(false);
 
     // Pass user and page data to render method
     return {

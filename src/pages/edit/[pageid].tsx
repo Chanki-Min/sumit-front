@@ -12,14 +12,32 @@ import Editor from "../../components/edit/Editor";
 import MenuBar from "../../components/edit/MenuBar";
 import SlidesSelectionSidebar from "../../components/edit/SlidesSelectionSidebar";
 import { SliderParent } from "../../styles/Sidebar";
+import {
+  prefetchPageByIdQuerySsr,
+  usePageByIdQuery,
+} from "../../api/page/fetchPageByPageUUID";
+import { useRouter } from "next/router";
+import { dehydrate, QueryClient } from "react-query";
 
 interface PageProps {
   user?: UserProfile;
 }
 
 const EditPage = ({ user }: PageProps) => {
+  const router = useRouter();
+
+  // TODO: fetch page from api server
+  const pageQuery = usePageByIdQuery(
+    router.query.pageid as string,
+    router.isReady
+  );
+
   const [showLeftSidebar, setShowLeftSidebar] = useState<boolean>(true);
   const [showRightSidebar, setShowRightSidebar] = useState<boolean>(true);
+
+  if (pageQuery.isLoading || pageQuery.isError || pageQuery.isIdle) {
+    return <></>;
+  }
 
   return (
     <>
@@ -32,9 +50,12 @@ const EditPage = ({ user }: PageProps) => {
 
       <DndProvider backend={HTML5Backend}>
         <SliderParent>
-          <SlidesSelectionSidebar visible={showLeftSidebar} />
+          <SlidesSelectionSidebar
+            visible={showLeftSidebar}
+            slides={pageQuery.data.slides}
+          />
           <EditArea>
-            <Editor />
+            <Editor rootBlockId={pageQuery.data.slides[0].root_block.uuid} />
           </EditArea>
           <BlockDraggerSidebar visible={showRightSidebar} />
         </SliderParent>
@@ -54,10 +75,19 @@ export const getServerSideProps = withPageAuthRequired<PageProps>({
     // Getting user data from Auth0
     const user = getSession(context.req, context.res)?.user;
 
+    // Prefetch page data
+    // TODO: 인증 추가
+    const queryClient = new QueryClient();
+    await prefetchPageByIdQuerySsr(
+      queryClient,
+      context.params?.pageid as string
+    );
+
     // Pass user to render method
     return {
       props: {
         user: user,
+        dehydratedState: dehydrate(queryClient),
       },
     };
   },
