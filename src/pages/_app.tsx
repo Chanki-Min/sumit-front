@@ -4,6 +4,7 @@ import Head from "next/head";
 import GlobalStyle from "../styles/globalStyle";
 import Layout from "../components/layout/index";
 import { UserProvider } from "@auth0/nextjs-auth0";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import "semantic-ui-css/semantic.min.css";
 import { useState } from "react";
@@ -29,6 +30,7 @@ function SumitApp({ Component, pageProps }: AppProps) {
           </UserProvider>
           {/* </ThemeProvider> */}
         </Hydrate>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>
   );
