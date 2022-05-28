@@ -39,7 +39,7 @@ export function useCreateBlockMutation() {
           queryKey
         ) as Block;
 
-        const newRootBlock = handleAddBlockByPath(
+        const newRootBlock = handleAddBlockCSR(
           prevRootBlock,
           props.csr.dropPath,
           props.block
@@ -50,3 +50,12 @@ export function useCreateBlockMutation() {
     }
   );
 }
+
+const handleAddBlockCSR = (
+  rootBlock: Block,
+  dropPath: number[],
+  newBlock: Block
+) => {
+  const newRootBlock = handleAddBlockByPath(rootBlock, dropPath, newBlock);
+  return newRootBlock;
+};

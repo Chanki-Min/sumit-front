@@ -39,11 +39,10 @@ export function useDeleteBlockMutation() {
           queryKey
         ) as Block;
 
-        const newRootBlock = handleDeleteBlockByPath(
+        const newRootBlock = handleDeleteBlockCSR(
           prevRootBlock,
           props.csr.thisPath,
-          props.block,
-          false
+          props.block
         );
 
         queryClient.setQueryData(queryKey, newRootBlock);
@@ -51,3 +50,18 @@ export function useDeleteBlockMutation() {
     }
   );
 }
+
+const handleDeleteBlockCSR = (
+  rootBlock: Block,
+  thisPath: number[],
+  item: Block
+) => {
+  const newRootBlock = handleDeleteBlockByPath(
+    rootBlock,
+    thisPath,
+    item,
+    false
+  );
+
+  return newRootBlock;
+};
