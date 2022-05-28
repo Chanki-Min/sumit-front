@@ -11,7 +11,6 @@ export const ItemTypes = {
 } as const;
 
 interface DropzoneProps {
-  isLast?: boolean;
   path: string;
   handleMoveToPath: (
     dropzonePath: number[],
@@ -21,7 +20,6 @@ interface DropzoneProps {
 }
 
 const Dropzone: React.FC<DropzoneProps> = ({
-  isLast,
   path,
   handleMoveToPath,
   handleAddBlock,
@@ -91,7 +89,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
 
   return (
     <DropzoneContaier
-      className={classNames("dropzone", path, { isLast: isLast })}
+      className={classNames("dropzone", path)}
       path={path}
       ref={drop}
       isActive={isActive}
@@ -99,7 +97,10 @@ const Dropzone: React.FC<DropzoneProps> = ({
   );
 };
 
-const DropzoneContaier = styled.div<{ isActive: boolean; path: string }>`
+const DropzoneContaier = styled.div<{
+  isActive: boolean;
+  path: string;
+}>`
   width: calc(100% - 18px);
   height: 8px;
   background-color: ${(p) => (p.isActive ? "blue" : "transparent")};

@@ -224,6 +224,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     <>
       <div style={{ position: "relative" }}>
         <Dropzone
+          key={`dropzone_${path}`}
           path={path}
           handleMoveToPath={handleMoveToPath}
           handleAddBlock={handleAddBlock}
@@ -245,11 +246,14 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
               handleIndentation={handleIndentation}
             />
           ))}
-          <Dropzone
-            path={`${path}-${block.children.length}`}
-            handleMoveToPath={handleMoveToPath}
-            handleAddBlock={handleAddBlock}
-          />
+          <div style={{ position: "relative" }}>
+            <Dropzone
+              key={`dropzone_${path}-${block.children.length}`}
+              path={`${path}-${block.children.length}`}
+              handleMoveToPath={handleMoveToPath}
+              handleAddBlock={handleAddBlock}
+            />
+          </div>
         </div>
       </div>
     </>
