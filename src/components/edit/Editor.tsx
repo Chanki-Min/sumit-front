@@ -14,6 +14,13 @@ import {
   IWithPath,
 } from "../../tree/tree";
 import { setCaretToEnd } from "../../tree/treeUtil";
+import { useBlockByIdQuery } from "../../api/block/fetchBlock";
+import { useCreateBlockMutation } from "../../api/block/createBlock";
+import { useMoveBlockMutation } from "../../api/block/moveBlock";
+import { useDeleteBlockMutation } from "../../api/block/deleteBlock";
+import { useIndentBlockMutation } from "../../api/block/intentBlock";
+import { useUpdateBlockMutation } from "../../api/block/updateBlock";
+import { cloneDeep } from "lodash";
 
 const initialBlock: Block = {
   uuid: uuidv4(),
@@ -34,15 +41,36 @@ const initialBlock: Block = {
   ],
 };
 
-const Editor: React.FC = () => {
+interface EditorProps {
+  rootBlockId: string;
+}
+
+const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
+  // TODO: rootBlockQuery로 상태 수정
   const [rootBlock, setRootBlock] = useState<Block>(initialBlock);
 
+  const rootBlockQuery = useBlockByIdQuery(rootBlockId);
+  const createBlock = useCreateBlockMutation();
+  const updateBlock = useUpdateBlockMutation();
+  const moveBlock = useMoveBlockMutation();
+  const deleteBlock = useDeleteBlockMutation();
+  const indentBlock = useIndentBlockMutation();
+
   const rootBlockRef = useRef<Block>(rootBlock); // handler function의 closure는 이전 상태를 바라볼 수 있으므로 ref로 수정한다.
+  const rootBlockQueryRef = useRef<Block>();
   const nextFocusPathOrNull = useRef<string | null>("0-0");
 
   // rootBlockRef를 최신화하고, 포커스를 처리한다
   useEffect(() => {
     rootBlockRef.current = rootBlock;
+  }, [rootBlock]);
+
+  useEffect(() => {
+    if (!rootBlockQuery.isSuccess) {
+      return;
+    }
+    rootBlockQueryRef.current = rootBlockQuery.data;
+
     if (nextFocusPathOrNull.current !== null) {
       const el = document.querySelector(
         `#path-${nextFocusPathOrNull.current} > .focusable`
@@ -52,7 +80,7 @@ const Editor: React.FC = () => {
       }
       nextFocusPathOrNull.current = null;
     }
-  }, [rootBlock]);
+  }, [rootBlockQuery.data, rootBlockQuery.isSuccess]);
 
   // enter 키 등 블록을 추가할때 실행한다
   const handleAddBlock = (dropPath: number[], newBlock: Block) => {
@@ -63,22 +91,42 @@ const Editor: React.FC = () => {
     );
     nextFocusPathOrNull.current = dropPath.join("-");
     setRootBlock(newRootBlock);
+
+    if (typeof rootBlockQueryRef.current?.uuid === "string") {
+      createBlock.mutate({
+        rootBlockId: rootBlockQueryRef.current?.uuid as string,
+        block: newBlock,
+        csr: {
+          dropPath: dropPath,
+        },
+      });
+    }
   };
 
-  const handleDeleteThis = (thisPath: number[], item: Block) => {
+  const handleDeleteThis = (blockPath: number[], item: Block) => {
     const newRootBlock = handleDeleteBlockByPath(
       rootBlockRef.current,
-      thisPath,
+      blockPath,
       item,
       false
     );
 
-    const prevBlockPath = [0, thisPath[1] - 1];
+    const prevBlockPath = [0, blockPath[1] - 1];
     nextFocusPathOrNull.current = findLastChildPath(
-      rootBlock.children[thisPath[1] - 1],
+      rootBlock.children[blockPath[1] - 1],
       prevBlockPath
     );
     setRootBlock(newRootBlock);
+
+    if (typeof rootBlockQueryRef.current?.uuid === "string") {
+      deleteBlock.mutate({
+        rootBlockId: rootBlockQueryRef.current?.uuid as string,
+        block: item,
+        csr: {
+          blockPath: blockPath,
+        },
+      });
+    }
   };
 
   const handleUpdateWithoutChildren = (
@@ -91,6 +139,16 @@ const Editor: React.FC = () => {
       updateProps
     );
     setRootBlock(newRootBlock);
+
+    if (typeof rootBlockQueryRef.current?.uuid === "string") {
+      updateBlock.mutate({
+        rootBlockId: rootBlockQueryRef.current?.uuid as string,
+        block: updateProps,
+        csr: {
+          blockPath: thisPath,
+        },
+      });
+    }
   };
 
   const handleMoveToPath = (
@@ -118,6 +176,16 @@ const Editor: React.FC = () => {
     }
 
     // NO-OP case 종료
+
+    moveBlock.mutate({
+      rootBlockId: rootBlockQueryRef.current?.uuid as string,
+      targetBlockId: "",
+      block: item,
+      csr: {
+        splitDropzonePath: splitDropzonePath,
+        itemPath: splitItemPath,
+      },
+    });
 
     // case: dropzone과 itemPath의 부모가 동일한 경우
     if (dropzoneParentPath === itemParentPath) {
@@ -149,6 +217,16 @@ const Editor: React.FC = () => {
     item: Block,
     directon: "left" | "right"
   ) => {
+    indentBlock.mutate({
+      rootBlockId: rootBlockQueryRef.current?.uuid as string,
+      block: item,
+      directon: directon,
+      csr: {
+        splitParentPath: splitParentPath,
+        splitItemPath: splitItemPath,
+      },
+    });
+
     if (directon === "right") {
       const [newRootBlock, droppedPath] = handleMoveToParentLastChildWithFlat(
         rootBlockRef.current,
@@ -175,11 +253,16 @@ const Editor: React.FC = () => {
       setRootBlock(nextRootBlock);
     }
   };
+
+  if (typeof rootBlockQuery.data === "undefined") {
+    return <></>;
+  }
+
   return (
     <div id="slide">
       <EditableBlock
         path="0"
-        block={rootBlock}
+        block={rootBlockQuery.data}
         handleAddBlock={handleAddBlock}
         handleDeleteThis={handleDeleteThis}
         handleUpdateWithoutChildren={handleUpdateWithoutChildren}

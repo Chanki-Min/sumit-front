@@ -25,6 +25,7 @@ export function useBlockByIdQuery(blockId: string, enabled?: boolean) {
     },
     {
       enabled: enabled,
+      refetchOnWindowFocus: false,
     }
   );
 }

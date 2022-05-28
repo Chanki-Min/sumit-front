@@ -76,6 +76,8 @@ export const handleMoveToDifferentParent = (
     splitItemPath.slice(1)
   );
 
+  // TODO: 만약 remove로 인해 dropzonePath가 변동되는 경우에 대한 처리
+
   newRootBlock.children = _addChildByPath(
     newRootBlock.children,
     splitDropZonePath.slice(1),

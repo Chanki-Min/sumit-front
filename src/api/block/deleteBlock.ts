@@ -22,7 +22,7 @@ interface DeleteBlockProps {
   rootBlockId: string;
   block: Block;
   csr: {
-    thisPath: number[];
+    blockPath: number[];
   };
 }
 
@@ -41,7 +41,7 @@ export function useDeleteBlockMutation() {
 
         const newRootBlock = handleDeleteBlockCSR(
           prevRootBlock,
-          props.csr.thisPath,
+          props.csr.blockPath,
           props.block
         );
 
