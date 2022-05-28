@@ -1,8 +1,8 @@
 import { AxiosError } from "axios";
-import { QueryClient, useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { IS_DEV_RUNTIME } from "../../Contstants";
 import { Block } from "../../models/block";
-import { handleAddBlockByPath, handleDeleteBlockByPath } from "../../tree/tree";
+import { handleDeleteBlockByPath } from "../../tree/tree";
 import { blockKeys } from "./fetchBlock";
 
 async function deleteBlock(props: DeleteBlockProps): Promise<DeleteBlockProps> {

@@ -31,7 +31,7 @@ interface IndentBlockProps {
   };
 }
 
-export function useDeleteBlockMutation() {
+export function useIndentBlockMutation() {
   const queryClient = useQueryClient();
 
   return useMutation<IndentBlockProps, AxiosError, IndentBlockProps, unknown>(

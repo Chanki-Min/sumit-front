@@ -33,7 +33,7 @@ interface MoveBlockProps {
   };
 }
 
-export function useCreateBlockMutation() {
+export function useMoveBlockMutation() {
   const queryClient = useQueryClient();
 
   return useMutation<MoveBlockProps, AxiosError, MoveBlockProps, unknown>(
