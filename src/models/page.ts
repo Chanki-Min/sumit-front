@@ -19,3 +19,10 @@ export interface Page {
 
 	slides: Slide[];
 }
+
+export type OmittedPage = Omit<
+	Page,
+	'user_uuid' | 'createAt' | 'updateAt' | 'slides'
+>;
+
+export type PagePartial = Partial<Page>;

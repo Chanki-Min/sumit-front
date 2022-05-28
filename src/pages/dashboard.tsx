@@ -4,7 +4,8 @@ import {
 	withPageAuthRequired,
 } from '@auth0/nextjs-auth0';
 import fetchPages from '../api/fetchPage';
-import { Page } from '../models/page';
+import { Page, PagePartial, OmittedPage } from '../models/page';
+import ProjectPreview from '../components/layout/projectPreview';
 
 import { Card, Grid, Image, Icon } from 'semantic-ui-react';
 import Link from 'next/link';
@@ -13,7 +14,8 @@ import styled from 'styled-components';
 
 interface DashboardProps {
 	user?: UserProfile;
-	pages: Omit<Page, 'slides'>[];
+	// pages: Omit<Page, 'slides'>[];
+	pages: OmittedPage[];
 }
 /**
  * /dashboard 페이지
@@ -27,48 +29,29 @@ const Dashboard = ({ user, pages }: DashboardProps) => {
 
 	return (
 		<Grid>
-			<Grid.Row columns='3' stretched>
-				{pages.map((page) => (
-					<Card key={page.uuid}>
-						<div className='ui fluid image'>
-							{page.share == true ? (
-								<a className='ui blue right corner label'>
-									<i className='globe icon'></i>
-								</a>
-							) : (
-								<a className='ui red right corner label'>
-									<i className='globe slash icon'></i>
-								</a>
-							)}
-							<img src='https://user-images.githubusercontent.com/62105312/168966757-11dfb781-44c6-4261-a247-cf5b968e5e90.png' />
-						</div>
-						<Card.Content href={`/edit/${page.uuid}`} passHref>
-							<Card.Header>{page.title}</Card.Header>
-							<Card.Description>{page.description}</Card.Description>
-							{page.hashtags.map((h) => (
-								<HashTag key={h}>{h}</HashTag>
-							))}
-						</Card.Content>
-					</Card>
-				))}
-				{/* <Link href={`/dashboard`} passHref> */}
+			<Grid columns='4'>
+				{pages.map((page) => {
+					// <ProjectPreview {...page} />;
+					<ProjectPreview page={page} />;
+					// <ProjectPreview
+					// 	uuid={page.uuid}
+					// 	title={page.title}
+					// 	description={page.description}
+					// 	hashtags={page.hashtags}
+					// 	share={page.share}
+					// />;
+					// console.log(page);
+				})}
 				<Card>
 					<Icon name='plus' />
 					<Card.Content>
 						<Card.Header>새로운 페이지 시작하기</Card.Header>
 					</Card.Content>
 				</Card>
-			</Grid.Row>
+			</Grid>
 		</Grid>
 	);
 };
-
-const HashTag = styled.div`
-	height: 20px;
-	margin: 2px;
-	background-color: aquamarine;
-	border: none;
-`;
 
 export const getServerSideProps = withPageAuthRequired<DashboardProps>({
 	async getServerSideProps(context) {
