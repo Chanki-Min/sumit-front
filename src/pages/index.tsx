@@ -17,6 +17,6 @@ export default Home;
 const LeftWing = styled.section`
   display: block;
   width: 300px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 70px);
   background-color: lightgray;
 `;

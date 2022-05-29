@@ -21,7 +21,7 @@ export default Layout;
 const LayoutContent = styled.section`
   position: relative;
   width: 100%;
-  margin-top: 60px;
+  /* margin-top: 60px; */
   padding: 0.05px; // to disable margin collapsing
-  height: calc(100% - 60px);
+  height: calc(100% - 70px);
 `;
