@@ -26,6 +26,10 @@ const Dashboard = ({ user, pages }: DashboardProps) => {
   }
 
   return (
+    // 페이지 이미지 출력 uuid넘버대로 나오도록, title 이미지 밑에, description title 밑에나오도록, 태그항목(이미지)
+    // 페이지 이미지(미리보기)위에 share 여부에 따라 이미지 다르게 
+    // 페이지 title 옆에 드롭다운 기능 구현하기
+    // 마지막 페이지는 무조건 새로운 페이지 시작하기로 만들기(추가 버튼구현)
     <Grid>
       <Grid.Row columns="3" stretched>
         {pages.map((page) => (
@@ -43,6 +47,7 @@ const Dashboard = ({ user, pages }: DashboardProps) => {
         ))}
       </Grid.Row>
     </Grid>
+    
   );
 };
 
