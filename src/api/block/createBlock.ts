@@ -20,6 +20,7 @@ async function createBlock(props: CreateBlockProps): Promise<CreateBlockProps> {
 
 interface CreateBlockProps {
   rootBlockId: string;
+  parentId: string | null;
   block: Block;
   csr: {
     dropPath: number[];

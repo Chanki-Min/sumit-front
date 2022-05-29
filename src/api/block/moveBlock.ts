@@ -14,7 +14,7 @@ async function moveBlock(props: MoveBlockProps): Promise<MoveBlockProps> {
   if (IS_DEV_RUNTIME) {
     console.log(
       `API:moveBlock {\nrootId: ${props.rootBlockId}\nblock: ${JSON.stringify(
-        props.block
+        props.csr.block
       )}`
     );
   }
@@ -26,8 +26,9 @@ async function moveBlock(props: MoveBlockProps): Promise<MoveBlockProps> {
 interface MoveBlockProps {
   rootBlockId: string;
   targetBlockId: string; // 이동시킬 부모의 id
-  block: Block;
+  order: number; // 이동할 순서
   csr: {
+    block: Block;
     splitDropzonePath: number[];
     itemPath: number[];
   };
@@ -49,7 +50,7 @@ export function useMoveBlockMutation() {
         const newRootBlock = handleMoveToPathCSR(
           prevRootBlock,
           props.csr.splitDropzonePath,
-          { ...props.block, path: props.csr.itemPath.join("-") }
+          { ...props.csr.block, path: props.csr.itemPath.join("-") }
         );
 
         queryClient.setQueryData(queryKey, newRootBlock);
