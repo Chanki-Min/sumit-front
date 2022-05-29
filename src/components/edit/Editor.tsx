@@ -10,7 +10,8 @@ import { useMoveBlockMutation } from "../../api/block/moveBlock";
 import { useDeleteBlockMutation } from "../../api/block/deleteBlock";
 import { useIndentBlockMutation } from "../../api/block/intentBlock";
 import { useUpdateBlockMutation } from "../../api/block/updateBlock";
-import { IS_SERVER_SIDE } from "../../Contstants";
+import { IS_SERVER_SIDE, LOCAL_STORAGE_KEYS } from "../../Contstants";
+import axios from "axios";
 
 interface EditorProps {
   rootBlockId: string;
@@ -32,6 +33,21 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
     }
     rootBlockQueryRef.current = rootBlockQuery.data;
   }, [rootBlockQuery.data, rootBlockQuery.isSuccess]);
+
+  useEffect(() => {
+    if (typeof rootBlockQuery.data === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(
+      LOCAL_STORAGE_KEYS.TEMP_STORE,
+      JSON.stringify(rootBlockQuery.data)
+    );
+
+    axios.post("http://localhost:8000/blocks/bulk", {
+      block: rootBlockQuery.data,
+    });
+  }, [rootBlockQuery.data]);
 
   // enter 키 등 블록을 추가할때 실행한다
   const handleAddBlock = (
