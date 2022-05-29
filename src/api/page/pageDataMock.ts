@@ -29,6 +29,7 @@ export const pageMockData: Page[] = [
     share: true,
     createAt: 0, // unix timestamp
     updateAt: 0, // unix timestamp
+    hashtags: ["포트폴리오"],
 
     slides: [
       {
