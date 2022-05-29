@@ -1,7 +1,7 @@
 import { Block } from "./block";
 
 interface Slide {
-  uuid: number;
+  uuid: string;
 
   pathname: string;
 
@@ -11,9 +11,9 @@ interface Slide {
 
   root_block: Block;
 
-  createAt: Date;
+  createAt: number;
 
-  updateAt: Date;
+  updateAt: number;
 }
 
 export default Slide;

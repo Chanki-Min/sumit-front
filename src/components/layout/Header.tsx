@@ -32,8 +32,6 @@ const Header: React.FC = (props) => {
           </Link>
         )}
       </Navigation>
-
-
     </>
   );
 };
@@ -41,6 +39,10 @@ const Header: React.FC = (props) => {
 export default Header;
 
 const Navigation = styled.nav`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
   box-sizing: border-box;
   padding: 5px 20px;
   width: 100%;
@@ -78,4 +80,3 @@ const Profile = styled.a`
     overflow: hidden;
   }
 `;
-

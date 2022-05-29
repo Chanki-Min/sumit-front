@@ -4,10 +4,15 @@ import Head from "next/head";
 import GlobalStyle from "../styles/globalStyle";
 import Layout from "../components/layout/index";
 import { UserProvider } from "@auth0/nextjs-auth0";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import "semantic-ui-css/semantic.min.css";
+import { useState } from "react";
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 
 function SumitApp({ Component, pageProps }: AppProps) {
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
     <>
       <Head>
@@ -15,13 +20,18 @@ function SumitApp({ Component, pageProps }: AppProps) {
         <title>boilerplate</title>
       </Head>
       <GlobalStyle />
-      {/* <ThemeProvider> */}
-      <UserProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </UserProvider>
-      {/* </ThemeProvider> */}
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          {/* <ThemeProvider> */}
+          <UserProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </UserProvider>
+          {/* </ThemeProvider> */}
+        </Hydrate>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </>
   );
 }

@@ -10,7 +10,7 @@ const Layout: React.FC = (props) => {
 
   return (
     <>
-     <Header/>
+      <Header />
       <LayoutContent>{props.children} </LayoutContent>
     </>
   );
@@ -19,6 +19,9 @@ const Layout: React.FC = (props) => {
 export default Layout;
 
 const LayoutContent = styled.section`
-position: relative;
+  position: relative;
   width: 100%;
+  margin-top: 60px;
+  padding: 0.05px; // to disable margin collapsing
+  height: calc(100% - 60px);
 `;

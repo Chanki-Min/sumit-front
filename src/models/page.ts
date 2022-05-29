@@ -1,7 +1,7 @@
 import Slide from "./Slide";
 
 export interface Page {
-  uuid: number;
+  uuid: string;
 
   user_uuid: string;
 
