@@ -1,6 +1,11 @@
 import { useUser } from "@auth0/nextjs-auth0";
+import { renderToHTML } from "next/dist/server/render";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState} from "react";
 import styled from "styled-components";
+
+
 
 const Mypage: React.FC = () => {
   const { user, isLoading } = useUser();
@@ -11,38 +16,117 @@ const Mypage: React.FC = () => {
       </Container>
     );
   }
-
+  
   return (
     <PageWrapper>
       <LeftWing className="leftWing">
-        <a>프로필 설정</a>
+        <a href="http://localhost:3000/mypage">프로필 설정</a>
         <a>비밀번호 변경</a>
         <a>탈퇴하기</a>
       </LeftWing>
       <RightWing className="rightWing">
-        <ProfileSection><div className="img_cont"></div>
-          <div className="button_cont"><GrayButtonBig>업로드</GrayButtonBig><GrayButtonBig>삭제</GrayButtonBig></div></ProfileSection>
-        <NameSection><div><div>이름</div>직업<div>
+    
+        {user && (
+          <ProfileSection>
+              {user.picture && (
+                <div className="profile_img">
+                  <Image
+                    src={user.picture}
+                    layout="fill"
+                    alt="user profile image"
+                  />
+                </div>
+              )}
+            
+          <div className="button_cont"><GrayButtonBig>업로드</GrayButtonBig><GrayButtonBig>삭제</GrayButtonBig></div>
+              </ProfileSection>
+         
+        )}
+
+
+        { user && (
+        <InputSection>
+          <div className="input_name">이름</div>
+          <input className="input_item" type="text" value={user.name} ></input>
+        </InputSection>
+        )}
+        <InputSection>
+          <div className="input_name">직업</div>
+          <input className="input_item"></input>
+        </InputSection>
+          {/* <div>
+            <div>이름</div>
+            <br/>직업<div>
           </div></div>
           
           <div>
+            <input/> 
             <input/>
-            <input/>
-            </div></NameSection>
+            </div> */}
+
+         <Changebutton onClick={onChange}>변경하기</Changebutton>
+            
+
       </RightWing>
     </PageWrapper>
-
-
-
-  );
+    );
+  
 };
 
 
-export default Mypage;
+
+export default Mypage; 
+
+const onChange = () => {
+	alert('변경 완료!');
+};
+
+const Changebutton = styled.button`
+    background-color: #3f9df5;
+    border-color:#3f9df5;
+    border-radius:3px;
+    margin-top:10px;
+    
+    color:white;
+    width: 90px;
+    height: 35px;
+
+    /* & .activebtn {
+      background-color: gray;
+    }
+
+    & .unactivebtn {
+      background-color: #3f9df5;
+    } */
+`
+
+const InputSection = styled.div`
+  & .input_name {
+    display: inline-block;
+    margin-right:20px;
+    background-color: #00b496;
+    border-radius:10px;   
+    width : 80px;
+    text-align: center;
+    color : white;
+
+  }
+  & .input_item {
+    display: inline-block;
+    margin-left: 10px;
+    border: 1px solid black;
+    border-radius:3px;    
+    width: 280px;
+    height: 35px;
+  }
+`
 
 const ProfileSection = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 50px;
+  margin-left:-150px;
+  margin-bottom:60px;
+  
   & .img_cont {
     width: 120px;
     height: 120px;
@@ -56,14 +140,26 @@ const ProfileSection = styled.div`
     align-items: center;
 
   }
+
+  & > .profile_img {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
 `
 
 const GrayButtonBig = styled.button`
-    display: block;
-      background-color: gray;
+      display: block;
+      background-color: #d6d4d4;
+      border-radius: 5px;
+      border-color:#d6d4d4;
       width: 100px;
       height: 38px;
 `
+
+
 
 const NameSection = styled.div`
   display: flex;
@@ -145,5 +241,5 @@ const RightWing = styled.div`
 `
 
 const Button = styled.div`
-
+ border-radius: 20px;
 `;
