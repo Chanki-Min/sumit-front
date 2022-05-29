@@ -29,7 +29,11 @@ import styles from "./EditableBlock.module.scss";
 interface EditableBlockProps {
   block: Block;
   path: string;
-  handleAddBlock: (dropPath: number[], newBlock: Block) => void;
+  handleAddBlock: (
+    dropPath: number[],
+    parentId: string | null,
+    newBlock: Block
+  ) => void;
   handleDeleteThis: (thisPath: number[], item: Block) => void;
   handleUpdateWithoutChildren: (thisPath: number[], updateProps: Block) => void;
   handleMoveToPath: (
@@ -100,6 +104,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       const nextPath = getNextPath(splitedPath);
       handleAddBlock(
         nextPath,
+        block.parent,
         getBlockPrototype(block.type, {
           order: nextPath[nextPath.length - 1],
           parent: block.parent,
@@ -210,6 +215,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         ))}
         <div style={{ position: "relative" }}>
           <Dropzone
+            parentId={block.uuid}
             path={`${path}-${block.children.length}`}
             handleMoveToPath={handleMoveToPath}
             handleAddBlock={handleAddBlock}
@@ -224,6 +230,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     <>
       <div style={{ position: "relative" }}>
         <Dropzone
+          parentId={block.parent}
           key={`dropzone_${path}`}
           path={path}
           handleMoveToPath={handleMoveToPath}
@@ -248,6 +255,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           ))}
           <div style={{ position: "relative" }}>
             <Dropzone
+              parentId={block.parent}
               key={`dropzone_${path}-${block.children.length}`}
               path={`${path}-${block.children.length}`}
               handleMoveToPath={handleMoveToPath}

@@ -12,17 +12,23 @@ export const ItemTypes = {
 
 interface DropzoneProps {
   path: string;
+  parentId: string | null;
   handleMoveToPath: (
     dropzonePath: number[],
     { path: itemPath, ...item }: IWithPath<Block>
   ) => void;
-  handleAddBlock: (dropPath: number[], newBlock: Block) => void;
+  handleAddBlock: (
+    dropPath: number[],
+    parentId: string | null,
+    newBlock: Block
+  ) => void;
 }
 
 const Dropzone: React.FC<DropzoneProps> = ({
   path,
   handleMoveToPath,
   handleAddBlock,
+  parentId,
 }) => {
   const splitDropzonePath: number[] = path.split("-").map(Number);
 
@@ -67,10 +73,10 @@ const Dropzone: React.FC<DropzoneProps> = ({
       ) => {
         console.log("dropping to path:", path);
         if (isSidebarBlock(blockWithPathOrSidebarBlock)) {
-          handleAddBlock(splitDropzonePath, {
+          handleAddBlock(splitDropzonePath, parentId, {
             ...blockWithPathOrSidebarBlock,
             order: splitDropzonePath[splitDropzonePath.length - 1],
-            parent: null,
+            parent: parentId,
           } as Block);
         } else {
           handleMoveToPath(splitDropzonePath, blockWithPathOrSidebarBlock);

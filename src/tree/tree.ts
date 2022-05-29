@@ -3,6 +3,7 @@ import { Block } from "../models/block";
 
 interface IHasChildren<T> {
   children: T[];
+  order: number;
 }
 
 export type IWithPath<T extends {}> = T & {
@@ -299,12 +300,16 @@ const _find = <T extends IHasChildren<T>>(list: T[], path: number[]): T => {
  * @param toIndex
  * @returns
  */
-const _move = <T>(list: T[], fromIndex: number, toIndex: number): T[] => {
+const _move = <T extends IHasChildren<T>>(
+  list: T[],
+  fromIndex: number,
+  toIndex: number
+): T[] => {
   const result = Array.from(list);
   const [removed] = result.splice(fromIndex, 1);
   result.splice(toIndex, 0, removed);
 
-  return result;
+  return result.map((r, i) => ({ ...r, order: i }));
 };
 
 /**
@@ -313,12 +318,13 @@ const _move = <T>(list: T[], fromIndex: number, toIndex: number): T[] => {
  * @param index
  * @returns
  */
-const _remove = <T>(list: T[], index: number): T[] => [
-  // part of the array before the specified index
-  ...list.slice(0, index),
-  // part of the array after the specified index
-  ...list.slice(index + 1),
-];
+const _remove = <T extends IHasChildren<T>>(list: T[], index: number): T[] =>
+  [
+    // part of the array before the specified index
+    ...list.slice(0, index),
+    // part of the array after the specified index
+    ...list.slice(index + 1),
+  ].map((r, i) => ({ ...r, order: i }));
 
 /**
  * __PURE__ list의 index에 새로운 item을 삽입하고, 오른쪽 엘리먼트들을 right shift한 배열을 반환합니다
@@ -327,12 +333,17 @@ const _remove = <T>(list: T[], index: number): T[] => [
  * @param newItem
  * @returns
  */
-const _insert = <T>(list: T[], index: number, newItem: T) => [
-  ...list.slice(0, index),
-  // 삽입된 item
-  newItem,
-  ...list.slice(index),
-];
+const _insert = <T extends IHasChildren<T>>(
+  list: T[],
+  index: number,
+  newItem: T
+) =>
+  [
+    ...list.slice(0, index),
+    // 삽입된 item
+    newItem,
+    ...list.slice(index),
+  ].map((r, i) => ({ ...r, order: i }));
 
 /**
  * __PURE__ __REQURSIVE__
@@ -353,7 +364,8 @@ const _reorderChildren = <T extends IHasChildren<T>>(
   if (splitDropZonePath.length === 1) {
     const dropZoneIndex = Number(splitDropZonePath[0]);
     const itemIndex = Number(splitItemPath[0]);
-    return _move(children, itemIndex, dropZoneIndex); // itemIndex에서 dropZone index로 이동시킨다
+    const moved = _move(children, itemIndex, dropZoneIndex); // itemIndex에서 dropZone index로 이동시킨다
+    return moved.map((m, index) => ({ ...m, order: index }));
   }
 
   // 아직 마지막 단계가 아니라면, 현재 children은 그대로 두고 path에 해당하는 child만 수정하도록 한다

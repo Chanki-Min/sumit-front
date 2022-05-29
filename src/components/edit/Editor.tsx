@@ -34,11 +34,16 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
   }, [rootBlockQuery.data, rootBlockQuery.isSuccess]);
 
   // enter 키 등 블록을 추가할때 실행한다
-  const handleAddBlock = (dropPath: number[], newBlock: Block) => {
+  const handleAddBlock = (
+    dropPath: number[],
+    parentId: string | null,
+    newBlock: Block
+  ) => {
     if (typeof rootBlockQueryRef.current?.uuid === "string") {
       createBlock.mutate(
         {
           rootBlockId: rootBlockQueryRef.current?.uuid as string,
+          parentId: parentId,
           block: newBlock,
           csr: {
             dropPath: dropPath,
@@ -120,8 +125,12 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
       {
         rootBlockId: rootBlockQueryRef.current?.uuid as string,
         targetBlockId: "",
-        block: item,
+        order: splitDropzonePath[splitDropzonePath.length - 1],
         csr: {
+          block: {
+            ...item,
+            order: splitDropzonePath[splitDropzonePath.length - 1],
+          },
           splitDropzonePath: splitDropzonePath,
           itemPath: splitItemPath,
         },
