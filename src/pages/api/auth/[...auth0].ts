@@ -1,6 +1,8 @@
 // pages/api/auth/[...auth0].js
 import { handleAuth, handleLogin } from "@auth0/nextjs-auth0";
 
+const AUTH0_AUDIENCE = process.env.AUTH0_BASE_URL;
+
 interface Auth0Error {
   status: number;
   message: string;
@@ -16,11 +18,11 @@ export default handleAuth({
   async login(req, res) {
     try {
       await handleLogin(req, res, {
-        authorizationParams: {
-          audience: "http://localhost:8000", // or AUTH0_AUDIENCE
-          // Add the `offline_access` scope to also get a Refresh Token
-          scope: "openid profile email read:products", // or AUTH0_SCOPE
-        },
+        // authorizationParams: {
+        //   audience: AUTH0_AUDIENCE, // or AUTH0_AUDIENCE
+        //   // Add the `offline_access` scope to also get a Refresh Token
+        //   scope: "", // or AUTH0_SCOPE
+        // },
       });
     } catch (error) {
       if (isAuth0Error(error))
