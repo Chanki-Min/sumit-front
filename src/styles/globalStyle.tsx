@@ -21,6 +21,17 @@ const GlobalStyle = createGlobalStyle`
     #__next {
         height: 100%;
     }
+
+    [contenteditable=true]:empty:focus:before{
+        content: attr(placeholder);
+        display: block;
+        color: #aaa;
+    }
+
+    [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+}
 `;
 
 export default GlobalStyle;

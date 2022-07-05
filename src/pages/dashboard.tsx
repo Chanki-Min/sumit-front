@@ -3,17 +3,17 @@ import {
   UserProfile,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
-import fetchPages from "../api/fetchPage";
-import { Page } from "../models/page";
 
-import { Container, Grid, Image, Segment } from "semantic-ui-react";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { docco } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-import Link from "next/link";
+import { OmittedPage, transformPageToOmittedPage } from "../models/page";
+import ProjectPreview from "../components/commons/projectPreview";
+
+import { Card, Grid, Icon } from "semantic-ui-react";
+import { fetchPages } from "../api/page/fetchPage";
 
 interface DashboardProps {
   user?: UserProfile;
-  pages: Omit<Page, "slides">[];
+  // pages: Omit<Page, 'slides'>[];
+  pages: OmittedPage[];
 }
 /**
  * /dashboard 페이지
@@ -25,24 +25,25 @@ const Dashboard = ({ user, pages }: DashboardProps) => {
     return <></>;
   }
 
+  //   console.log(pages, user);
+
   return (
-    <Grid>
-      <Grid.Row columns="3" stretched>
-        {pages.map((page) => (
-          <Link key={page.uuid} href={`/edit/${page.uuid}`} passHref>
-            <Segment vertical>
-              <SyntaxHighlighter
-                language="json"
-                style={docco}
-                customStyle={{ marginRight: "10px" }}
-              >
-                {JSON.stringify(page, null, 2)}
-              </SyntaxHighlighter>
-            </Segment>
-          </Link>
-        ))}
-      </Grid.Row>
+    // <Grid>
+    <Grid rows="3" columns={2}>
+      {pages.map((page) => (
+        <ProjectPreview key={page.uuid} project={page} />
+      ))}
+
+      <div style={{ height: "350px", width: "500px", margin: "5% 0 0 6%" }}>
+        <Card>
+          <Icon name="plus" />
+          <Card.Content>
+            <Card.Header>새로운 페이지 시작하기</Card.Header>
+          </Card.Content>
+        </Card>
+      </div>
     </Grid>
+    // </Grid>
   );
 };
 
@@ -50,13 +51,13 @@ export const getServerSideProps = withPageAuthRequired<DashboardProps>({
   async getServerSideProps(context) {
     // Getting user data from Auth0
     const user = getSession(context.req, context.res)?.user;
-    const pages = await fetchPages({ withSlides: false });
+    const pages = await fetchPages(false);
 
     // Pass user and page data to render method
     return {
       props: {
         user: user,
-        pages: pages,
+        pages: pages.map(transformPageToOmittedPage),
       },
     };
   },
