@@ -5,18 +5,15 @@ import styled from "styled-components";
 const LoginSection: React.FC = () => {
   const { user, isLoading } = useUser();
 
-  if(isLoading) {
-    return (
-      <Container>
-      </Container>
-    );
+  if (isLoading) {
+    return <Container></Container>;
   }
 
   if (typeof user === "undefined") {
     return (
       <Container>
         <h1>로그인하고 시작하기</h1>
-        <p>sumut에 처음 오셨나요?</p>
+        <p>sumit에 처음 오셨나요?</p>
         <Link href={"/api/auth/login"} passHref>
           <LoginAnchor>Login</LoginAnchor>
         </Link>

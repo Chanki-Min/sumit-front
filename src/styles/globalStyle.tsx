@@ -27,6 +27,11 @@ const GlobalStyle = createGlobalStyle`
         display: block;
         color: #aaa;
     }
+
+    [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+}
 `;
 
 export default GlobalStyle;
