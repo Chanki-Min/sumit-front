@@ -7,7 +7,9 @@ import {
 import { OmittedPage, transformPageToOmittedPage } from '../models/page';
 import ProjectPreview from '../components/commons/projectPreview';
 
-import { Card, Grid, Icon } from 'semantic-ui-react';
+import Link from 'next/link';
+import styled from 'styled-components';
+import { Grid } from 'semantic-ui-react';
 import { fetchPages } from '../api/page/fetchPage';
 
 interface DashboardProps {
@@ -28,23 +30,19 @@ const Dashboard = ({ user, pages }: DashboardProps) => {
 	//   console.log(pages, user);
 
 	return (
-		// <Grid>
 		<Grid rows='3' columns={2}>
 			{pages.map((page) => (
 				<ProjectPreview key={page.uuid} project={page} />
 			))}
-
-			<div style={{ height: '350px', width: '500px', margin: '5% 0 0 6%' }}>
-				<Card>
-					<Icon name='plus' />
-					<Card.Content>
-						<Card.Header>새로운 페이지 시작하기</Card.Header>
-					</Card.Content>
-				</Card>
-				<button>페이지 삭제하기</button>
-			</div>
+			<AddNewProject>
+				<Link href={'/edit/test_page'} passHref>
+					<button className='add_btn'>
+						<i className='plus icon' />
+					</button>
+				</Link>
+				<div className='add_title'>새로운 페이지 시작하기</div>
+			</AddNewProject>
 		</Grid>
-		// </Grid>
 	);
 };
 
@@ -65,3 +63,29 @@ export const getServerSideProps = withPageAuthRequired<DashboardProps>({
 });
 
 export default Dashboard;
+
+const AddNewProject = styled.div`
+	width: 500px;
+	height: 350px;
+	margin: 5% 0 0 6%;
+	// border: 1px solid black;
+
+	& > .add_btn {
+		width: 100%;
+		height: 65%;
+		border: 2px solid gray;
+
+		&:hover {
+			color: teal;
+			border: 2px solid teal;
+			background-color: lightblue;
+		}
+	}
+
+	& > .add_title {
+		margin-top: 4%;
+		font-size: 20px;
+		font-weight: 700;
+		text-align: center;
+	}
+`;

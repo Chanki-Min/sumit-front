@@ -1,6 +1,6 @@
 import { OmittedPage } from '../../models/page';
 
-import { Card, Image } from 'semantic-ui-react';
+import { Button, Dropdown, Image } from 'semantic-ui-react';
 
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -16,14 +16,24 @@ interface ProjectPreviewProps {
 }
 
 const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
+	const openModal = (e: React.MouseEvent<HTMLElement>) => {
+		console.log('button is clicked');
+	};
+
+	const options = [
+		{ key: 'share', text: '공유 및 도메인 설정' },
+		{ key: 'name', text: '이름 변경' },
+		{ key: 'delete', text: '삭제' },
+	];
+
 	return (
-		<Link
-			href={{
-				pathname: `/edit/${project.uuid}`,
-			}}
-			passHref
-		>
-			<ProjectContainer>
+		<ProjectContainer>
+			<Link
+				href={{
+					pathname: `/edit/${project.uuid}`,
+				}}
+				passHref
+			>
 				<div className='project_img'>
 					<Image
 						fluid
@@ -36,20 +46,35 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
 						alt='project preview image'
 					/>
 				</div>
-				<div className='project_header'>
+			</Link>
+			<div className='project_header'>
+				<Link
+					href={{
+						pathname: `/edit/${project.uuid}`,
+					}}
+					passHref
+				>
 					{project.title}
-					<button className='menu_btn'>
-						<i className='ellipsis horizontal icon' />
-					</button>
-				</div>
-				<div className='project_description'>{project.description}</div>
-				<div className='project_hashtags'>
-					{project.hashtags.map((h) => (
-						<HashTag key={h}>{h}</HashTag>
-					))}
-				</div>
-			</ProjectContainer>
-		</Link>
+				</Link>
+				<Dropdown className='menu_btn' icon='ellipsis horizontal icon'>
+					<Dropdown.Menu>
+						{options.map((option) => (
+							<Dropdown.Item
+								key={option.key}
+								text={option.text}
+								onClick={openModal}
+							/>
+						))}
+					</Dropdown.Menu>
+				</Dropdown>
+			</div>
+			<div className='project_description'>{project.description}</div>
+			<div className='project_hashtags'>
+				{project.hashtags.map((h) => (
+					<HashTag key={h}>{h}</HashTag>
+				))}
+			</div>
+		</ProjectContainer>
 	);
 };
 
