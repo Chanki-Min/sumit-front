@@ -11,6 +11,7 @@ interface MypageProps {
   user?: UserProfile;
 }
 
+
 const Mypage: React.FC<MypageProps> = ({ user }) => {
   const [name, setName] = useState<string | undefined>(user?.name ?? "");
   const [job, setJob] = useState<string | undefined>("");
@@ -25,6 +26,7 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     }
   }, [name, job, user?.name]);
 
+  
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -45,6 +47,8 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
         break;
     }
   };
+
+  
 
   return (
     <PageWrapper>
@@ -67,7 +71,18 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
             )}
 
             <div className="button_cont">
-              <GrayButtonBig>업로드</GrayButtonBig>
+              <GrayButtonBig>
+                <label htmlFor="chooseFile">
+                  업로드
+                </label>
+                  </GrayButtonBig>
+                  <input
+                  type="file" 
+                  id="chooseFile"
+                  name="chooseFile"
+                  accept="image/*" 
+                  style={{display:"none"}}
+                  />
               <GrayButtonBig>삭제</GrayButtonBig>
             </div>
           </ProfileSection>
@@ -128,6 +143,8 @@ export const getServerSideProps = withPageAuthRequired<MypageProps>({
 });
 
 export default Mypage;
+
+
 
 const onChange = () => {
   alert("변경 완료!");
@@ -205,6 +222,14 @@ const GrayButtonBig = styled.button`
   border-color: #d6d4d4;
   width: 100px;
   height: 38px;
+
+  & .label {
+    cursor:pointer;
+  }
+
+  & .chooseFile {
+    display:none;
+  }
 `;
 
 const NameSection = styled.div`
