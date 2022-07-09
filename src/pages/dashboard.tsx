@@ -1,9 +1,11 @@
+import React, { useState } from 'react';
 import {
 	getSession,
 	UserProfile,
 	withPageAuthRequired,
 } from '@auth0/nextjs-auth0';
 
+import Modal from '../components/commons/modal';
 import { OmittedPage, transformPageToOmittedPage } from '../models/page';
 import ProjectPreview from '../components/commons/projectPreview';
 
@@ -23,26 +25,56 @@ interface DashboardProps {
  * @returns NextPage
  */
 const Dashboard = ({ user, pages }: DashboardProps) => {
+	//   console.log(pages, user);
+
+	const [openDeletePage, setOpenDeletePage] = useState<boolean>(false);
+
+	const openDeletePageModal = () => {
+		setOpenDeletePage(true);
+		console.log('페이지 삭제 모달이 열렸습니다.');
+	};
+	const closeDeletePageModal = () => {
+		setOpenDeletePage(false);
+		console.log('페이지 삭제 모달이 닫혔습니다.');
+	};
+	const onDeletePage = () => {
+		// page를 삭제하는 api call
+		window.location.assign('/dashboard');
+		console.log('페이지가 삭제되었습니다.');
+	};
+
 	if (!Array.isArray(pages) || !user) {
 		return <></>;
 	}
 
-	//   console.log(pages, user);
-
 	return (
-		<Grid rows='3' columns={2}>
-			{pages.map((page) => (
-				<ProjectPreview key={page.uuid} project={page} />
-			))}
-			<AddNewProject>
-				<Link href={'/edit/test_page'} passHref>
-					<button className='add_btn'>
-						<i className='plus icon' />
-					</button>
-				</Link>
-				<div className='add_title'>새로운 페이지 시작하기</div>
-			</AddNewProject>
-		</Grid>
+		<>
+			<Grid rows='3' columns={2}>
+				{pages.map((page) => (
+					<ProjectPreview key={page.uuid} project={page} />
+				))}
+				<AddNewProject>
+					<Link href={'/edit/test_page'} passHref>
+						<button className='add_btn'>
+							<i className='plus icon' />
+						</button>
+					</Link>
+					<div className='add_title'>새로운 페이지 시작하기</div>
+				</AddNewProject>
+				<button onClick={openDeletePageModal}>페이지 삭제하기</button>
+			</Grid>
+			<Modal
+				open={openDeletePage}
+				close={closeDeletePageModal}
+				registerBtnStr='예'
+				registerBtnFunc={onDeletePage}
+				cancelBtnStr='아니오'
+				cancelBtnFunc={closeDeletePageModal}
+				header='페이지 삭제'
+				info='정말로 페이지를 삭제하시겠습니까?
+							'
+			/>
+		</>
 	);
 };
 
@@ -78,7 +110,7 @@ const AddNewProject = styled.div`
 		&:hover {
 			color: teal;
 			border: 2px solid teal;
-			background-color: lightblue;
+			background-color: #a7bed9;
 		}
 	}
 
