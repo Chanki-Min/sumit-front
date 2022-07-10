@@ -4,7 +4,7 @@ import {
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 
 interface MypageProps {
@@ -47,9 +47,24 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
         break;
     }
   };
-
   
+  //const [imgFile, setImgFile] = useState<string | undefined>(user?.picture ?? "");
+  const [imgFile, setImgFile] = useState(null)
+  const fileInput = useRef(null)
 
+  const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+
+    const reader = new FileReader();
+    const file = fileInput.current.files[0];
+
+    reader.readAsDataURL(file);
+    
+    reader.onload = () => {
+     setImgFile(reader.result);
+    };
+  };
+
+ 
   return (
     <PageWrapper>
       <LeftWing className="leftWing">
@@ -60,15 +75,15 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
       <RightWing className="rightWing">
         {user && (
           <ProfileSection>
-            {user.picture && (
+            {user.picture && 
               <div className="profile_img">
-                <Image
-                  src={user.picture}
+              <Image
+                  src={imgFile ? imgFile  : user.picture}
                   layout="fill"
                   alt="user profile image"
                 />
-              </div>
-            )}
+              </div>}
+
 
             <div className="button_cont">
               <GrayButtonBig>
@@ -82,6 +97,8 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
                   name="chooseFile"
                   accept="image/*" 
                   style={{display:"none"}}
+                  ref={fileInput}
+                  onChange={handleImageChange}
                   />
               <GrayButtonBig>삭제</GrayButtonBig>
             </div>
@@ -110,15 +127,6 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
             onChange={handleInputChange}
           ></input>
         </InputSection>
-        {/* <div>
-            <div>이름</div>
-            <br/>직업<div>
-          </div></div>
-          
-          <div>
-            <input/> 
-            <input/>
-            </div> */}
 
         <Changebutton onClick={onChange} isActive={isChangeAble}>
           변경하기
@@ -127,6 +135,8 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     </PageWrapper>
   );
 };
+
+
 
 export const getServerSideProps = withPageAuthRequired<MypageProps>({
   async getServerSideProps(context) {
@@ -223,11 +233,8 @@ const GrayButtonBig = styled.button`
   width: 100px;
   height: 38px;
 
-  & .label {
-    cursor:pointer;
-  }
 
-  & .chooseFile {
+  & #chooseFile {
     display:none;
   }
 `;
