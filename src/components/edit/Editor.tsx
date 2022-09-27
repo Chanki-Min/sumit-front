@@ -43,10 +43,6 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
       LOCAL_STORAGE_KEYS.TEMP_STORE,
       JSON.stringify(rootBlockQuery.data)
     );
-
-    axios.post("http://localhost:8000/blocks/bulk", {
-      block: rootBlockQuery.data,
-    });
   }, [rootBlockQuery.data]);
 
   // enter 키 등 블록을 추가할때 실행한다
