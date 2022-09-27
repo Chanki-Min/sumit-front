@@ -11,7 +11,6 @@ interface MypageProps {
   user?: UserProfile;
 }
 
-
 const Mypage: React.FC<MypageProps> = ({ user }) => {
   const [name, setName] = useState<string | undefined>(user?.name ?? "");
   const [job, setJob] = useState<string | undefined>("");
@@ -26,7 +25,6 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     }
   }, [name, job, user?.name]);
 
-  
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -47,24 +45,26 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
         break;
     }
   };
-  
-  //const [imgFile, setImgFile] = useState<string | undefined>(user?.picture ?? "");
-  const [imgFile, setImgFile] = useState(null)
-  const fileInput = useRef(null)
+
+  const [imgFile, setImgFile] = useState(null);
+  const fileInput = useRef(null);
 
   const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-
     const reader = new FileReader();
     const file = fileInput.current.files[0];
 
     reader.readAsDataURL(file);
-    
+
     reader.onload = () => {
-     setImgFile(reader.result);
+      setImgFile(reader.result);
     };
   };
 
- 
+  const onChange = () => {
+    console.log(imgFile);
+    alert("변경 완료!");
+  };
+
   return (
     <PageWrapper>
       <LeftWing className="leftWing">
@@ -75,31 +75,29 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
       <RightWing className="rightWing">
         {user && (
           <ProfileSection>
-            {user.picture && 
+            {user.picture && (
               <div className="profile_img">
-              <Image
-                  src={imgFile ? imgFile  : user.picture}
+                <Image
+                  src={imgFile ? imgFile : user.picture}
                   layout="fill"
                   alt="user profile image"
                 />
-              </div>}
-
+              </div>
+            )}
 
             <div className="button_cont">
               <GrayButtonBig>
-                <label htmlFor="chooseFile">
-                  업로드
-                </label>
-                  </GrayButtonBig>
-                  <input
-                  type="file" 
-                  id="chooseFile"
-                  name="chooseFile"
-                  accept="image/*" 
-                  style={{display:"none"}}
-                  ref={fileInput}
-                  onChange={handleImageChange}
-                  />
+                <label htmlFor="chooseFile">업로드</label>
+              </GrayButtonBig>
+              <input
+                type="file"
+                id="chooseFile"
+                name="chooseFile"
+                accept="image/*"
+                style={{ display: "none" }}
+                ref={fileInput}
+                onChange={handleImageChange}
+              />
               <GrayButtonBig>삭제</GrayButtonBig>
             </div>
           </ProfileSection>
@@ -136,8 +134,6 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
   );
 };
 
-
-
 export const getServerSideProps = withPageAuthRequired<MypageProps>({
   async getServerSideProps(context) {
     // Getting user data from Auth0
@@ -154,11 +150,6 @@ export const getServerSideProps = withPageAuthRequired<MypageProps>({
 
 export default Mypage;
 
-
-
-const onChange = () => {
-  alert("변경 완료!");
-};
 const Changebutton = styled.button<{ isActive: boolean }>`
   border-color: gray;
   border-radius: 3px;
@@ -233,9 +224,8 @@ const GrayButtonBig = styled.button`
   width: 100px;
   height: 38px;
 
-
   & #chooseFile {
-    display:none;
+    display: none;
   }
 `;
 
