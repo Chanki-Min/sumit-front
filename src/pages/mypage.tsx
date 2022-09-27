@@ -1,8 +1,10 @@
 import {
   getSession,
   UserProfile,
+  useUser,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
+import axios from "axios";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
@@ -46,12 +48,17 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     }
   };
 
-  const [imgFile, setImgFile] = useState(null);
+  const [imgFile, setImgFile] = useState<string | ArrayBuffer>(null);
+  const [formData, setFormData] = useState<FormData>();
   const fileInput = useRef(null);
 
   const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const reader = new FileReader();
     const file = fileInput.current.files[0];
+
+    const formData = new FormData();
+    formData.append("file", file);
+    setFormData(formData);
 
     reader.readAsDataURL(file);
 
@@ -60,8 +67,30 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     };
   };
 
-  const onChange = () => {
-    console.log(imgFile);
+  const handleRemoveImage = () => {
+    setImgFile(null);
+    setFormData(undefined);
+  };
+
+  const submitProfileImage = async () => {
+    if (typeof formData === "undefined") {
+      return;
+    }
+    const uploadRes = await axios.post<{ Location: string }>(
+      "/api/uploadImage",
+      formData
+    );
+
+    const auth0Res = await axios.patch("/api/me", {
+      picture: uploadRes.data.Location,
+      nickname: name,
+      user_metadata: {
+        job: job,
+      },
+    });
+
+    await axios.get("/api/auth/me");
+
     alert("변경 완료!");
   };
 
@@ -78,7 +107,7 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
             {user.picture && (
               <div className="profile_img">
                 <Image
-                  src={imgFile ? imgFile : user.picture}
+                  src={imgFile ? imgFile.toString() : user.picture}
                   layout="fill"
                   alt="user profile image"
                 />
@@ -87,7 +116,7 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
 
             <div className="button_cont">
               <GrayButtonBig>
-                <label htmlFor="chooseFile">업로드</label>
+                <label htmlFor="chooseFile">사진 추가</label>
               </GrayButtonBig>
               <input
                 type="file"
@@ -98,7 +127,7 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
                 ref={fileInput}
                 onChange={handleImageChange}
               />
-              <GrayButtonBig>삭제</GrayButtonBig>
+              <GrayButtonBig onClick={handleRemoveImage}>초기화</GrayButtonBig>
             </div>
           </ProfileSection>
         )}
@@ -126,7 +155,7 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
           ></input>
         </InputSection>
 
-        <Changebutton onClick={onChange} isActive={isChangeAble}>
+        <Changebutton onClick={submitProfileImage} isActive={isChangeAble}>
           변경하기
         </Changebutton>
       </RightWing>
@@ -191,8 +220,6 @@ const InputSection = styled.div`
 const ProfileSection = styled.div`
   display: flex;
   gap: 50px;
-  margin-left: -150px;
-  margin-bottom: 60px;
 
   & .img_cont {
     width: 120px;
