@@ -32,10 +32,10 @@ const PasswordChange = () => {
 
 
 
-    const inputName = e.target.name as "cur_pw" | "new_pw" | "new_pwcheck";
+    const inputpw = e.target.name as "cur_pw" | "new_pw" | "new_pwcheck";
     const value = e.target.value;
 
-    switch (inputName) {
+    switch (inputpw) {
       case "cur_pw":
         setCur_PW(value);
         break;
@@ -51,7 +51,24 @@ const PasswordChange = () => {
         break;
     }
   }
-  
+
+  const hasError = passwordEntered =>{
+    const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    const pw = $("#new_pw").val();
+    // new_pw.length < 8 ? true : false; //비밀번호는 최소 8자리(n자리)
+   
+    if(false === reg.test(pw)) {
+      alert('비밀번호는 8자 이상이어야 하며, 숫자/대문자/소문자/특수문자를 모두 포함해야 합니다.');
+      }else {
+      console.log("통과");
+      } 
+  }
+
+
+  const hasNotSameError = passwordEntered =>{
+    new_pw != new_pwcheck ? true : false;    
+  }
+
   
  
     return (
@@ -92,8 +109,12 @@ const PasswordChange = () => {
                         type="text"
                         value={new_pwcheck}
                         name="new_pwcheck"
+                        error={hasNotSameError('new_pwcheck')}
                         placeholder="내용을 입력해주세요."
                         onChange={handleInputChange}
+                        helperText={
+                          hasNotSameError('new_pwcheck') ? "비밀번호가 일치하지 않습니다." : null
+                      }
                     ></input>
                     {/* <div>비밀번호가 일치하지 않습니다.</div> */}
                 </InputSection>
