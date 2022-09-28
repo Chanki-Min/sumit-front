@@ -57,11 +57,15 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     const reader = new FileReader();
     const file = fileInput.current.files[0];
 
-    reader.readAsDataURL(file);
-    
     reader.onload = () => {
-     setImgFile(reader.result);
+      setImgFile(reader.result);
     };
+    reader.readAsDataURL(file);
+  };
+
+  const onClearImage: React.ChangeEventHandler<HTMLInputElement> = (e) =>{
+    setImgFile(null);
+    fileInput.current.value = "";
   };
 
  
@@ -69,8 +73,7 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     <PageWrapper>
       <LeftWing className="leftWing">
         <a href="http://localhost:3000/mypage">프로필 설정</a>
-        <a>비밀번호 변경</a>
-        <a>탈퇴하기</a>
+        <a href="http://localhost:3000/passwordChange">비밀번호 변경</a>
       </LeftWing>
       <RightWing className="rightWing">
         {user && (
@@ -100,7 +103,13 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
                   ref={fileInput}
                   onChange={handleImageChange}
                   />
-              <GrayButtonBig>삭제</GrayButtonBig>
+              <GrayButtonBig>
+              <input
+                  type="file" 
+                  accept="image/*" 
+                  style={{display:"none"}}
+                  onChange={onClearImage}
+                  />삭제</GrayButtonBig>
             </div>
           </ProfileSection>
         )}
