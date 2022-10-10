@@ -78,6 +78,8 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
   );
 };
 
+export default ProjectPreview;
+
 const ProjectContainer = styled.div`
   width: 500px;
   height: 350px;
@@ -120,5 +122,3 @@ const HashTag = styled.button`
   background-color: lightblue;
   border: none;
 `;
-
-export default ProjectPreview;
