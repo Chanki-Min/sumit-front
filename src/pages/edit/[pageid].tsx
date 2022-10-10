@@ -1,4 +1,5 @@
 import {
+  getAccessToken,
   getSession,
   UserProfile,
   withPageAuthRequired,
@@ -26,11 +27,7 @@ interface PageProps {
 const EditPage = ({ user }: PageProps) => {
   const router = useRouter();
 
-  // TODO: fetch page from api server
-  const pageQuery = usePageByIdQuery(
-    router.query.pageid as string,
-    router.isReady
-  );
+  const pageQuery = usePageByIdQuery(router.query.pageid as string);
 
   const [showLeftSidebar, setShowLeftSidebar] = useState<boolean>(true);
   const [showRightSidebar, setShowRightSidebar] = useState<boolean>(true);
@@ -38,6 +35,8 @@ const EditPage = ({ user }: PageProps) => {
   if (pageQuery.isLoading || pageQuery.isError || pageQuery.isIdle) {
     return <></>;
   }
+
+  console.log(pageQuery);
 
   return (
     <>
@@ -74,13 +73,16 @@ export const getServerSideProps = withPageAuthRequired<PageProps>({
   async getServerSideProps(context) {
     // Getting user data from Auth0
     const user = getSession(context.req, context.res)?.user;
+    const accessToken = (await getAccessToken(context.req, context.res))
+      .accessToken;
 
     // Prefetch page data
     // TODO: 인증 추가
     const queryClient = new QueryClient();
     await prefetchPageByIdQuerySsr(
       queryClient,
-      context.params?.pageid as string
+      context.params?.pageid as string,
+      accessToken
     );
 
     // Pass user to render method
