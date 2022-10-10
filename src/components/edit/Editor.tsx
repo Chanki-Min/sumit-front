@@ -32,6 +32,7 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
       return;
     }
     rootBlockQueryRef.current = rootBlockQuery.data;
+    axios.post("/api/blocks/bulk", rootBlockQuery.data);
   }, [rootBlockQuery.data, rootBlockQuery.isSuccess]);
 
   useEffect(() => {

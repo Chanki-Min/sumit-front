@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useQuery } from "react-query";
 import {
   IS_DEV_RUNTIME,
@@ -8,21 +9,22 @@ import { Block } from "../../models/block";
 import { rootBlockMock } from "../page/pageDataMock";
 
 async function fetchBlockById(blockId: string): Promise<Block> {
-  if (IS_DEV_RUNTIME) {
-    console.log("API:fetchBlockById, args:", blockId);
-  }
-  // TODO: API 구현 (fetch block by id)
-  if (!IS_SERVER_SIDE) {
-    const ls_data = window.localStorage.getItem(LOCAL_STORAGE_KEYS.TEMP_STORE);
-    if (ls_data === null) {
-      return rootBlockMock;
-    }
+  // if (IS_DEV_RUNTIME) {
+  //   console.log("API:fetchBlockById, args:", blockId);
+  // }
+  // // TODO: API 구현 (fetch block by id)
+  // if (!IS_SERVER_SIDE) {
+  //   const ls_data = window.localStorage.getItem(LOCAL_STORAGE_KEYS.TEMP_STORE);
+  //   if (ls_data === null) {
+  //     return rootBlockMock;
+  //   }
 
-    const tree = JSON.parse(ls_data);
-    return tree;
-  }
+  //   const tree = JSON.parse(ls_data);
+  //   return tree;
+  // }
+  // return rootBlockMock;
 
-  return rootBlockMock;
+  return (await axios.get(`/api/blocks/tree/${blockId}`)).data;
 }
 
 // react-query key 관리용 객체

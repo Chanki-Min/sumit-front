@@ -1,3 +1,4 @@
+import axios from "axios";
 import { QueryClient, useQuery, UseQueryOptions } from "react-query";
 import { IS_DEV_RUNTIME, IS_SERVER_SIDE } from "../../Contstants";
 import { Page } from "../../models/page";
@@ -8,12 +9,7 @@ async function fetchPageById(pageId: string) {
     console.log("API:fetchPageById, args:", pageId);
   }
 
-  const dataOrUndefined = pageMockData.find((p) => p.uuid === pageId);
-  if (typeof dataOrUndefined === "undefined") {
-    throw new Error(`pageId: ${pageId} not found`);
-  }
-
-  return dataOrUndefined;
+  return (await axios.get<Page>(`/api/pages/${pageId}`)).data;
 }
 
 export const usePageByIdQuery = (pageId: string, enabled?: boolean) => {
@@ -24,20 +20,32 @@ export const usePageByIdQuery = (pageId: string, enabled?: boolean) => {
     },
     {
       refetchOnWindowFocus: false,
-      enabled: enabled,
+      enabled: enabled ?? true,
     }
   );
 };
 
 export const prefetchPageByIdQuerySsr = (
   queryClient: QueryClient,
-  pageId: string
+  pageId: string,
+  token: string
 ) => {
   if (!IS_SERVER_SIDE) {
     throw new Error("preFetching should be called within server-side only");
   }
 
-  return queryClient.prefetchQuery(["page", pageId], () => {
-    return fetchPageById(pageId);
+  return queryClient.prefetchQuery(["page", pageId], async () => {
+    const pageRes = await axios.get<Page>(
+      `http://localhost:${8000}/pages/${pageId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(pageRes.data);
+
+    return pageRes.data;
   });
 };

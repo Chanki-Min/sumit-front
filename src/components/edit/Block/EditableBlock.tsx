@@ -67,7 +67,9 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
   // react-contenteditable의 일부 변수가 상태 변경을 감지하지 못하기 때문에 text filed를 ref로도 저장한다.
   const textValue = useRef<string | null>(
-    "text" in block.properties ? block.properties.text : null
+    typeof block.properties === "object" && "text" in block.properties
+      ? block.properties.text
+      : null
   );
   useEffect(() => {
     if ("text" in block.properties) {
