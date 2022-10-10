@@ -1,10 +1,12 @@
 import {
   getSession,
   UserProfile,
+  useUser,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
+import axios from "axios";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 
 interface MypageProps {
@@ -46,11 +48,56 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     }
   };
 
+  const [imgFile, setImgFile] = useState<string | ArrayBuffer>(null);
+  const [formData, setFormData] = useState<FormData>();
+  const fileInput = useRef(null);
+
+  const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const reader = new FileReader();
+    const file = fileInput.current.files[0];
+
+    const formData = new FormData();
+    formData.append("file", file);
+    setFormData(formData);
+
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      setImgFile(reader.result);
+    };
+  };
+
+  const handleRemoveImage = () => {
+    setImgFile(null);
+    setFormData(undefined);
+  };
+
+  const submitProfileImage = async () => {
+    if (typeof formData === "undefined") {
+      return;
+    }
+    const uploadRes = await axios.post<{ Location: string }>(
+      "/api/uploadImage",
+      formData
+    );
+
+    const auth0Res = await axios.patch("/api/me", {
+      picture: uploadRes.data.Location,
+      nickname: name,
+      user_metadata: {
+        job: job,
+      },
+    });
+
+    await axios.get("/api/auth/me");
+
+    alert("변경 완료!");
+  };
+
   return (
     <PageWrapper>
       <LeftWing className="leftWing">
         <a href="http://localhost:3000/mypage">프로필 설정</a>
-        <a>비밀번호 변경</a>
         <a>탈퇴하기</a>
       </LeftWing>
       <RightWing className="rightWing">
@@ -59,7 +106,7 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
             {user.picture && (
               <div className="profile_img">
                 <Image
-                  src={user.picture}
+                  src={imgFile ? imgFile.toString() : user.picture}
                   layout="fill"
                   alt="user profile image"
                 />
@@ -67,8 +114,19 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
             )}
 
             <div className="button_cont">
-              <GrayButtonBig>업로드</GrayButtonBig>
-              <GrayButtonBig>삭제</GrayButtonBig>
+              <GrayButtonBig>
+                <label htmlFor="chooseFile">사진 추가</label>
+              </GrayButtonBig>
+              <input
+                type="file"
+                id="chooseFile"
+                name="chooseFile"
+                accept="image/*"
+                style={{ display: "none" }}
+                ref={fileInput}
+                onChange={handleImageChange}
+              />
+              <GrayButtonBig onClick={handleRemoveImage}>초기화</GrayButtonBig>
             </div>
           </ProfileSection>
         )}
@@ -95,17 +153,8 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
             onChange={handleInputChange}
           ></input>
         </InputSection>
-        {/* <div>
-            <div>이름</div>
-            <br/>직업<div>
-          </div></div>
-          
-          <div>
-            <input/> 
-            <input/>
-            </div> */}
 
-        <Changebutton onClick={onChange} isActive={isChangeAble}>
+        <Changebutton onClick={submitProfileImage} isActive={isChangeAble}>
           변경하기
         </Changebutton>
       </RightWing>
@@ -129,9 +178,6 @@ export const getServerSideProps = withPageAuthRequired<MypageProps>({
 
 export default Mypage;
 
-const onChange = () => {
-  alert("변경 완료!");
-};
 const Changebutton = styled.button<{ isActive: boolean }>`
   border-color: gray;
   border-radius: 3px;
@@ -173,8 +219,6 @@ const InputSection = styled.div`
 const ProfileSection = styled.div`
   display: flex;
   gap: 50px;
-  margin-left: -150px;
-  margin-bottom: 60px;
 
   & .img_cont {
     width: 120px;
@@ -205,6 +249,10 @@ const GrayButtonBig = styled.button`
   border-color: #d6d4d4;
   width: 100px;
   height: 38px;
+
+  & #chooseFile {
+    display: none;
+  }
 `;
 
 const NameSection = styled.div`
