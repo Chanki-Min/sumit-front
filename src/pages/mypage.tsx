@@ -73,16 +73,16 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
   };
 
   const submitProfileImage = async () => {
-    if (typeof formData === "undefined") {
-      return;
+    let uploadRes;
+    if (typeof formData !== "undefined") {
+      uploadRes = await axios.post<{ Location: string }>(
+        "/api/uploadImage",
+        formData
+      );
     }
-    const uploadRes = await axios.post<{ Location: string }>(
-      "/api/uploadImage",
-      formData
-    );
 
     const auth0Res = await axios.patch("/api/me", {
-      picture: uploadRes.data.Location,
+      picture: uploadRes ? uploadRes.data.Location : undefined,
       nickname: name,
       user_metadata: {
         job: job,
