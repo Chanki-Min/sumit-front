@@ -6,26 +6,22 @@ export default withApiAuthRequired(async function hello(req, res) {
     const { accessToken } = await getAccessToken(req, res, {
       scopes: [],
     });
-
-    if (req.method !== "POST") {
-      return res.status(401).end();
-    }
-
-    console.log(req.body);
-
     const apiPort = process.env.API_PORT || 8000;
-    const response = await axios.post(
-      `http://localhost:${apiPort}/pages`,
-      req.body,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
 
-    const data = await response.data;
-    res.status(200).json(data);
+    if (req.method === "POST") {
+      const response = await axios.post(
+        `http://localhost:${apiPort}/pages`,
+        req.body,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const data = await response.data;
+      return res.status(200).json(data);
+    }
   } catch (error) {
     console.log("e", error);
     if (axios.isAxiosError(error)) {

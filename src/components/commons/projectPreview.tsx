@@ -4,6 +4,9 @@ import { Button, Dropdown, Image } from "semantic-ui-react";
 
 import styled from "styled-components";
 import Link from "next/link";
+import Modal from "./modalEnhanced";
+import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import axios from "axios";
 
 /**
  * /dashboard 페이지
@@ -15,16 +18,79 @@ interface ProjectPreviewProps {
   project: OmittedPage;
 }
 
-const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
-  const openModal = (e: React.MouseEvent<HTMLElement>) => {
-    console.log("button is clicked");
+type ModalKey = "share" | "name" | "delete";
+
+const getModalContent = (key: ModalKey, project: OmittedPage) => {
+  if (key === "name") {
+    return <NameModal project={project} />;
+  }
+
+  return (
+    <>
+      {key}
+      <Modal.Close>닫기</Modal.Close>
+    </>
+  );
+};
+
+const NameModal = ({ project }: { project: OmittedPage }) => {
+  const { title, description } = project;
+
+  const [dto, setDto] = useState({
+    title,
+    description,
+  });
+
+  const handleChange: ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (e) => {
+    setDto({
+      ...dto,
+      [e.currentTarget.name]: e.currentTarget.value,
+    });
   };
 
+  const handleSubmit = async () => {
+    await axios.put(`/api/pages/${project.uuid}`, dto);
+    location.reload();
+  };
+
+  return (
+    <>
+      <h1>이름 변경</h1>
+
+      <ul>
+        <li>
+          <h2>제목</h2>
+          <input
+            name="title"
+            placeholder={title}
+            type="text"
+            onChange={handleChange}
+          ></input>
+        </li>
+        <li>
+          <h2>설명</h2>
+          <textarea
+            name="description"
+            placeholder={description}
+            onChange={handleChange}
+          />
+        </li>
+      </ul>
+      <Modal.Close asChild>
+        <button onClick={handleSubmit}>저장</button>
+      </Modal.Close>
+    </>
+  );
+};
+
+const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
   const options = [
     { key: "share", text: "공유 및 도메인 설정" },
     { key: "name", text: "이름 변경" },
     { key: "delete", text: "삭제" },
-  ];
+  ] as const;
 
   return (
     <ProjectContainer>
@@ -59,11 +125,22 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
         <Dropdown className="menu_btn" icon="ellipsis horizontal icon">
           <Dropdown.Menu>
             {options.map((option) => (
-              <Dropdown.Item
-                key={option.key}
-                text={option.text}
-                onClick={openModal}
-              />
+              <Modal key={option.key}>
+                <Modal.Trigger asChild>
+                  <Dropdown.Item key={option.key} text={option.text} />
+                </Modal.Trigger>
+                <Modal.Portal>
+                  <DimmedOverlay>
+                    <CenteredModal
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      {getModalContent(option.key, project)}
+                    </CenteredModal>
+                  </DimmedOverlay>
+                </Modal.Portal>
+              </Modal>
             ))}
           </Dropdown.Menu>
         </Dropdown>
@@ -79,6 +156,25 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
 };
 
 export default ProjectPreview;
+
+const DimmedOverlay = styled(Modal.Overlay)`
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vh;
+  height: 100vh;
+  top: 0;
+  left: 0;
+`;
+
+const CenteredModal = styled(Modal.Content)`
+  position: fixed;
+  background-color: white;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+`;
 
 const ProjectContainer = styled.div`
   width: 500px;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   getAccessToken,
   getSession,
@@ -9,10 +9,8 @@ import {
 import { OmittedPage, transformPageToOmittedPage } from "../models/page";
 import ProjectPreview from "../components/commons/projectPreview";
 
-import Link from "next/link";
 import styled from "styled-components";
 import { Grid } from "semantic-ui-react";
-import { fetchPages } from "../api/page/fetchPage";
 import axios from "axios";
 
 interface DashboardProps {
