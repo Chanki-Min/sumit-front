@@ -23,6 +23,20 @@ export default withApiAuthRequired(async function hello(req, res) {
       const data = await response.data;
       return res.status(200).json(data);
     }
+
+    if (req.method === "DELETE") {
+      const response = await axios.delete(
+        `http://localhost:${apiPort}/pages/${pid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const data = await response.data;
+      return res.status(200).json(data);
+    }
   } catch (error) {
     console.log("e", error);
     if (axios.isAxiosError(error)) {

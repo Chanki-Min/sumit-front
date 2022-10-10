@@ -25,10 +25,31 @@ const getModalContent = (key: ModalKey, project: OmittedPage) => {
     return <NameModal project={project} />;
   }
 
+  if (key === "delete") {
+    return <DeleteModal project={project} />;
+  }
+
+  return null;
+};
+
+const DeleteModal = ({ project }: { project: OmittedPage }) => {
+  const { uuid, title } = project;
+
+  const handleDelete = async () => {
+    await axios.delete(`/api/pages/${uuid}`);
+    location.reload();
+  };
+
   return (
     <>
-      {key}
-      <Modal.Close>닫기</Modal.Close>
+      <h1>{`${title} 페이지를 삭제하시겠어요?`}</h1>
+
+      <Modal.Close asChild>
+        <button>취소</button>
+      </Modal.Close>
+      <Modal.Close asChild>
+        <button onClick={handleDelete}>삭제</button>
+      </Modal.Close>
     </>
   );
 };
@@ -87,7 +108,7 @@ const NameModal = ({ project }: { project: OmittedPage }) => {
 
 const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
   const options = [
-    { key: "share", text: "공유 및 도메인 설정" },
+    // { key: "share", text: "공유 및 도메인 설정" }, TODO: 구현하기
     { key: "name", text: "이름 변경" },
     { key: "delete", text: "삭제" },
   ] as const;
