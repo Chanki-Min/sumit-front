@@ -13,7 +13,7 @@ const nextConfig = {
     swcMinify: true, // enable swc minifier, https://nextjs.org/docs/advanced-features/compiler#minification
   },
   images: {
-    domains: ["lh3.googleusercontent.com"],
+    domains: ["lh3.googleusercontent.com", "s3.ap-northeast-2.amazonaws.com"],
   },
 };
 
