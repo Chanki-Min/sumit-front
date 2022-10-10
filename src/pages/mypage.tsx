@@ -98,7 +98,6 @@ const Mypage: React.FC<MypageProps> = ({ user }) => {
     <PageWrapper>
       <LeftWing className="leftWing">
         <a href="http://localhost:3000/mypage">프로필 설정</a>
-        <a>비밀번호 변경</a>
         <a>탈퇴하기</a>
       </LeftWing>
       <RightWing className="rightWing">
