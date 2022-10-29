@@ -1,11 +1,11 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "./Header";
 
-const Layout: React.FC = (props) => {
+const Layout: React.FC<PropsWithChildren> = (props) => {
   const { user } = useUser();
 
   return (
