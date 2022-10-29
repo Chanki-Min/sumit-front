@@ -12,10 +12,23 @@ import { useIndentBlockMutation } from "../../api/block/intentBlock";
 import { useUpdateBlockMutation } from "../../api/block/updateBlock";
 import { IS_SERVER_SIDE, LOCAL_STORAGE_KEYS } from "../../Contstants";
 import axios from "axios";
+import { debounce, throttle } from "lodash";
 
 interface EditorProps {
   rootBlockId: string;
 }
+
+const throttledSync = debounce(
+  (block: Block) => {
+    try {
+      axios.post("/api/blocks/bulk", block);
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  3000,
+  { trailing: true }
+);
 
 const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
   const rootBlockQuery = useBlockByIdQuery(rootBlockId);
@@ -32,7 +45,8 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
       return;
     }
     rootBlockQueryRef.current = rootBlockQuery.data;
-    axios.post("/api/blocks/bulk", rootBlockQuery.data);
+
+    throttledSync(rootBlockQuery.data);
   }, [rootBlockQuery.data, rootBlockQuery.isSuccess]);
 
   useEffect(() => {
