@@ -8,9 +8,21 @@ import { ReactQueryDevtools } from "react-query/devtools";
 
 import "semantic-ui-css/semantic.min.css";
 import { useState } from "react";
-import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import {
+  DehydratedState,
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
 
-function SumitApp({ Component, pageProps }: AppProps) {
+if (process.env.NEXT_PUBLIC_API_MOCKING === "enable") {
+  require("../../mocks");
+}
+
+function SumitApp({
+  Component,
+  pageProps,
+}: AppProps<{ dehydratedState: DehydratedState }>) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
