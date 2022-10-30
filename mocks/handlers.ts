@@ -173,4 +173,12 @@ export const handlers = [
       ])
     );
   }),
+
+  rest.get(`/api/auth/*`, (req, res, cts) => {
+    return req.passthrough();
+  }),
+
+  rest.get("https://summit-auth.jp.auth0.com/*", (req, res, cts) => {
+    return req.passthrough();
+  }),
 ];
