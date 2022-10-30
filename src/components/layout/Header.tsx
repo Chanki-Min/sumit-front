@@ -8,7 +8,7 @@ const Header: React.FC = (props) => {
   const { user } = useUser();
 
   const options = [
-    { key: "home", text: "홈으로 가기", link: "/home" },
+    { key: "home", text: "홈으로 가기", link: "/" },
     { key: "mypage", text: "마이페이지", link: "/mypage" },
     { key: "dashboard", text: "대시보드", link: "/dashboard" },
     { key: "logout", text: "로그아웃하기", link: "/api/auth/logout" },
@@ -22,6 +22,9 @@ const Header: React.FC = (props) => {
             <Image src="/img/mountain.png" alt="logo" width={40} height={40} />
             sumit
           </LogoBox>
+        </Link>
+        <Link href={"/search"} passHref>
+          <LogoBox>search</LogoBox>
         </Link>
         {user && (
           <Profile>
