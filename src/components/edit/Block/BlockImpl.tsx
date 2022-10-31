@@ -4,7 +4,11 @@ import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import styled, { css } from "styled-components";
 import { PLACEHOLDER } from "../../../Contstants";
 import { Block } from "../../../models/block";
-import { BlockProperties, plain_text_props } from "../../../models/properties";
+import {
+  BlockProperties,
+  plain_text_props,
+  bulleted_list_props,
+} from "../../../models/properties";
 
 import styles from "./EditableBlock.module.scss";
 
@@ -83,6 +87,37 @@ export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
   }
 );
 
+export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
+  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+    const prop = block as plain_text_props;
+
+    const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if ("text" in block.properties) {
+        onChange({
+          text: e.target.value,
+        });
+      }
+    };
+    console.log("return1");
+    return (
+      <>
+        <BulletContainer>
+          <Bullet $shape="fill-circle"></Bullet>
+        </BulletContainer>
+        <ContentEditable
+          className={classNames(styles.plain_text, "focusable")}
+          html={prop.properties.text}
+          tagName="p"
+          placeholder={PLACEHOLDER}
+          onChange={forwardContentEditableChange}
+          // innerRef={ref ?? undefined}
+          onKeyDown={onKeyDown}
+        />
+      </>
+    );
+  }
+);
+
 const TickBox = styled.div<{ $checked: boolean }>`
   width: 20px;
   height: 20px;
@@ -98,4 +133,41 @@ const TickBox = styled.div<{ $checked: boolean }>`
       background-size: 20px;
       border: none;
     `}
+`;
+
+const BulletContainer = styled.div`
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+
+  margin-right: 4px;
+  justify-content: center;
+  align-items: center;
+`;
+const Bullet = styled.div<{
+  $shape: "fill-circle" | "empty-circle" | "square";
+}>`
+  margin: 6px;
+  width: 8px;
+  height: 8px;
+
+  ${(p) => {
+    switch (p.$shape) {
+      case "fill-circle":
+        return css`
+          border-radius: 50%;
+          background-color: black;
+        `;
+      case "empty-circle":
+        return css`
+          border-radius: 0%;
+          background-color: black;
+        `;
+      case "square":
+        return css`
+          border-radius: 50%;
+          background-color: transparent;
+        `;
+    }
+  }}
 `;

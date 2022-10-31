@@ -1,30 +1,12 @@
-import classNames from "classnames";
-import React, {
-  forwardRef,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
+import React, { ReactElement, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
-import styled, { css } from "styled-components";
-import { PLACEHOLDER } from "../../../Contstants";
-import { Block, SidebarBlock } from "../../../models/block";
-import {
-  BlockProperties,
-  BlockTypes,
-  plain_text_props,
-  to_do_list_props,
-} from "../../../models/properties";
+import { Block } from "../../../models/block";
+import { BlockProperties } from "../../../models/properties";
 import { DraggerContainer } from "../../../styles/Block";
 import { IWithPath } from "../../../tree/tree";
 import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
-import { RenderPlainText, RenderTodo } from "./BlockImpl";
-
-import styles from "./EditableBlock.module.scss";
+import { RenderBulletedList, RenderPlainText, RenderTodo } from "./BlockImpl";
 
 interface EditableBlockProps {
   block: Block;
@@ -185,6 +167,16 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
           ref={contentEditable}
+        />
+      );
+      break;
+    case "bulleted_list":
+      renderElement = (
+        <RenderBulletedList
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          // ref={contentEditable}
         />
       );
       break;

@@ -43,7 +43,7 @@ export interface to_do_list_props {
   };
 }
 
-interface bulleted_list_props {
+export interface bulleted_list_props {
   type: "bulleted_list";
   properties: {
     text: string; // html strings, should be sanitized

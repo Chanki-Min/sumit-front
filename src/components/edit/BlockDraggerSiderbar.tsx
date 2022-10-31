@@ -30,6 +30,12 @@ const BlockDraggerSidebar: React.FC<Props> = ({ visible }) => {
         iconSrc="/img/sidebarIcons/list-check-solid.svg"
         blockType="to_do_list"
       />
+      <SidebarElement
+        title="bulleted 리스트"
+        desc="간단한 bulleted 리스트를 만들어보세요"
+        iconSrc="/img/sidebarIcons/bulleted-list.png"
+        blockType="bulleted_list"
+      />
     </Slider>
   );
 };

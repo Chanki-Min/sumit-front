@@ -138,6 +138,28 @@ export function getBlockPrototype(
           children: [],
         };
       }
+    case "bulleted_list":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "bulleted_list",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "bulleted_list",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
 
     default:
       if (options) {
