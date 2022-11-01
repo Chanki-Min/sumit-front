@@ -21,10 +21,9 @@ const MenuBar: React.FC<Props> = ({
           icon={leftBarVisible ? "angle double left" : "angle double right"}
           onClick={() => setLeftBarVisible(!leftBarVisible)}
         />
-
+        {/* 
         <Dropdown text="프로젝트" pointing className="link item">
           <Dropdown.Menu>
-            {/* <Dropdown.Header>일반</Dropdown.Header> */}
             <Dropdown.Item>저장하기</Dropdown.Item>
             <Dropdown.Item>실행 취소</Dropdown.Item>
             <Dropdown.Item>다시 실행</Dropdown.Item>
@@ -43,7 +42,7 @@ const MenuBar: React.FC<Props> = ({
           </Dropdown.Menu>
         </Dropdown>
         <Dropdown text="편집" pointing className="link item"></Dropdown>
-        <Dropdown text="도움말" pointing className="link item"></Dropdown>
+        <Dropdown text="도움말" pointing className="link item"></Dropdown> */}
 
         <Menu.Menu position="right">
           <TranparentButton
