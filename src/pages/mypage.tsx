@@ -279,6 +279,7 @@ const PageWrapper = styled.section`
 	height: calc(100vh - 60px);
 	overflow: scroll;
 	justify-content: stretch;
+	background-color: rgba(0, 0, 0, 0.2);
 
 	& .leftWing {
 		flex: 0 0 300px;
