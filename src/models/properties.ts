@@ -43,14 +43,14 @@ export interface to_do_list_props {
   };
 }
 
-interface bulleted_list_props {
+export interface bulleted_list_props {
   type: "bulleted_list";
   properties: {
     text: string; // html strings, should be sanitized
   };
 }
 
-interface numbered_list_props {
+export interface numbered_list_props {
   type: "numbered_list";
   properties: {
     text: string; // html strings, should be sanitized
@@ -92,7 +92,7 @@ interface carousel_slide {
   };
 }
 
-interface simple_margin_props {
+export interface simple_margin_props {
   type: "simple_margin";
   properties: {
     height: number;

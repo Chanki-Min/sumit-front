@@ -30,6 +30,24 @@ const BlockDraggerSidebar: React.FC<Props> = ({ visible }) => {
         iconSrc="/img/sidebarIcons/list-check-solid.svg"
         blockType="to_do_list"
       />
+      <SidebarElement
+        title="bulleted 리스트"
+        desc="간단한 bulleted 리스트를 만들어보세요"
+        iconSrc="/img/sidebarIcons/bulleted-list.png"
+        blockType="bulleted_list"
+      />
+      <SidebarElement
+        title="numbered 리스트"
+        desc="숫자로 정리된 리스트를 만들어보세요"
+        iconSrc="/img/sidebarIcons/numbered-list.png"
+        blockType="numbered_list"
+      />
+      <SidebarElement
+        title="간편한 간격"
+        desc="조절 가능한 간격으로 구획을 나눠보세요"
+        iconSrc="/img/sidebarIcons/divider.png"
+        blockType="simple_margin"
+      />
     </Slider>
   );
 };

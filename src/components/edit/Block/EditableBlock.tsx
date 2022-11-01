@@ -1,33 +1,22 @@
-import classNames from "classnames";
-import React, {
-  forwardRef,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
+import React, { ReactElement, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
-import styled, { css } from "styled-components";
-import { PLACEHOLDER } from "../../../Contstants";
-import { Block, SidebarBlock } from "../../../models/block";
-import {
-  BlockProperties,
-  BlockTypes,
-  plain_text_props,
-  to_do_list_props,
-} from "../../../models/properties";
+import { Block } from "../../../models/block";
+import { BlockProperties } from "../../../models/properties";
 import { DraggerContainer } from "../../../styles/Block";
 import { IWithPath } from "../../../tree/tree";
 import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
-import { RenderPlainText, RenderTodo } from "./BlockImpl";
-
-import styles from "./EditableBlock.module.scss";
+import {
+  RenderBulletedList,
+  RenderNumberedList,
+  RenderPlainText,
+  RenderSimpleMargin,
+  RenderTodo,
+} from "./BlockImpl";
 
 interface EditableBlockProps {
   block: Block;
+  siblingList: Block[];
   path: string;
   handleAddBlock: (
     dropPath: number[],
@@ -69,7 +58,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   const textValue = useRef<string | null>(
     typeof block.properties === "object" && "text" in block.properties
       ? block.properties.text
-      : null
+      : ""
   );
   useEffect(() => {
     if ("text" in block.properties) {
@@ -113,6 +102,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         })
       );
     }
+
     if (key === "Backspace" && textValue.current === "") {
       e.preventDefault();
       e.stopPropagation();
@@ -188,6 +178,43 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         />
       );
       break;
+    case "bulleted_list":
+      renderElement = (
+        <RenderBulletedList
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          // ref={contentEditable}
+        />
+      );
+      break;
+    case "numbered_list":
+      const firstIndex = getNumberedBlockIndex(
+        props.siblingList,
+        splitedPath[splitedPath.length - 1]
+      );
+
+      const myIndex = 1 + (splitedPath[splitedPath.length - 1] - firstIndex);
+
+      renderElement = (
+        <RenderNumberedList
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          numberedListIndex={myIndex}
+          // ref={contentEditable}
+        />
+      );
+      break;
+    case "simple_margin":
+      renderElement = (
+        <RenderSimpleMargin
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+        />
+      );
+      break;
     case "root_block":
       renderElement = <></>;
       break;
@@ -208,6 +235,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
             path={`${path}-${index}`}
             key={`${path}-${index}-${cb.uuid}`}
             block={cb}
+            siblingList={block.children}
             handleAddBlock={handleAddBlock}
             handleDeleteThis={handleDeleteThis}
             handleUpdateWithoutChildren={handleUpdateWithoutChildren}
@@ -243,18 +271,21 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         </DraggerContainer>
 
         <div style={{ marginLeft: "15px", position: "relative" }}>
-          {block.children.map((cb, index) => (
-            <EditableBlock
-              path={`${path}-${index}`}
-              key={`${path}-${index}-${cb.uuid}`}
-              block={cb}
-              handleAddBlock={handleAddBlock}
-              handleDeleteThis={handleDeleteThis}
-              handleUpdateWithoutChildren={handleUpdateWithoutChildren}
-              handleMoveToPath={handleMoveToPath}
-              handleIndentation={handleIndentation}
-            />
-          ))}
+          {block.children.map((cb, index) => {
+            return (
+              <EditableBlock
+                path={`${path}-${index}`}
+                key={`${path}-${index}-${cb.uuid}`}
+                block={cb}
+                siblingList={block.children}
+                handleAddBlock={handleAddBlock}
+                handleDeleteThis={handleDeleteThis}
+                handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+                handleMoveToPath={handleMoveToPath}
+                handleIndentation={handleIndentation}
+              />
+            );
+          })}
           <div style={{ position: "relative" }}>
             <Dropzone
               parentId={block.parent}
@@ -270,3 +301,15 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   );
 };
 export default EditableBlock;
+
+const getNumberedBlockIndex = (siblings: Block[], myIndex: number): number => {
+  if (
+    myIndex === 0 ||
+    siblings.length === 0 ||
+    siblings[myIndex - 1].type !== "numbered_list"
+  ) {
+    return myIndex;
+  }
+
+  return getNumberedBlockIndex(siblings, myIndex - 1);
+};
