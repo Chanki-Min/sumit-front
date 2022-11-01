@@ -14,18 +14,20 @@ const LoginSection: React.FC = () => {
 		return (
 			<Container>
 				<h1>로그인하고 sumit을 시작해보세요!</h1>
-				<Link href={'/api/auth/login'} passHref>
-					<Button animated='fade'>
-						<Button.Content visible>Sumit에 처음 오셨나요?</Button.Content>
-						<Button.Content hidden>Go to Login</Button.Content>
-					</Button>
-				</Link>
-				<Link href={'/search'} passHref>
-					<Button animated='fade'>
-						<Button.Content visible>페이지 구경하기</Button.Content>
-						<Button.Content hidden>Go to My SearchPage</Button.Content>
-					</Button>
-				</Link>
+				<BtnBox>
+					<Link href={'/api/auth/login'} passHref>
+						<Button animated='fade' className='btn'>
+							<Button.Content visible>Sumit에 처음 오셨나요?</Button.Content>
+							<Button.Content hidden>Go to Login</Button.Content>
+						</Button>
+					</Link>
+					<Link href={'/search'} passHref>
+						<Button animated='fade' className='btn'>
+							<Button.Content visible>페이지 구경하기</Button.Content>
+							<Button.Content hidden>Go to My SearchPage</Button.Content>
+						</Button>
+					</Link>
+				</BtnBox>
 			</Container>
 		);
 	}
@@ -33,18 +35,20 @@ const LoginSection: React.FC = () => {
 	return (
 		<Container>
 			<h1>환영합니다, {user.name}님!</h1>
-			<Link href={'/dashboard'} passHref>
-				<Button animated='fade' className='btn'>
-					<Button.Content visible>페이지를 한번 만들어볼까요?</Button.Content>
-					<Button.Content hidden>Go to My Dashboard</Button.Content>
-				</Button>
-			</Link>
-			<Link href={'/search'} passHref>
-				<Button animated='fade'>
-					<Button.Content visible>페이지 구경하기</Button.Content>
-					<Button.Content hidden>Go to My SearchPage</Button.Content>
-				</Button>
-			</Link>
+			<BtnBox>
+				<Link href={'/dashboard'} passHref>
+					<Button animated='fade' className='btn'>
+						<Button.Content visible>페이지를 한번 만들어볼까요?</Button.Content>
+						<Button.Content hidden>Go to My Dashboard</Button.Content>
+					</Button>
+				</Link>
+				<Link href={'/search'} passHref>
+					<Button animated='fade' className='btn'>
+						<Button.Content visible>페이지 구경하기</Button.Content>
+						<Button.Content hidden>Go to Search</Button.Content>
+					</Button>
+				</Link>
+			</BtnBox>
 		</Container>
 	);
 };
@@ -62,11 +66,25 @@ const Container = styled.div`
 	background-color: rgba(0, 0, 0, 0.2);
 
 	& > h1 {
-		font-size: 44px;
+		font-size: 52px;
 		font-weight: 600;
 	}
+`;
+
+const BtnBox = styled.div`
+	display: flex;
 
 	& > .btn {
-		border: 1px solid red;
+		height: 40px;
+		margin: 10px 10px 10px 10px;
+		line-height: 15px;
+		background-color: rgba(0, 0, 0, 0.7);
+		color: white;
+
+		&:hover {
+			height: 40px;
+			background-color: rgba(0, 0, 0, 0.7);
+			color: white;
+		}
 	}
 `;

@@ -99,8 +99,11 @@ const SearchBar = styled.div`
 	}
 
 	& > .search_btn {
-		width: 50px;
+		margin: 0 0 0 5px;
 		background-color: transparent;
-		border: none;
+
+		&:hover {
+			background-color: transparent;
+		}
 	}
 `;

@@ -8,10 +8,10 @@ const Header: React.FC = (props) => {
 	const { user } = useUser();
 
 	const options = [
-		{ key: 'home', text: '홈으로 가기', link: '/' },
+		// { key: 'home', text: '홈으로 가기', link: '/' },
 		{ key: 'mypage', text: '마이페이지', link: '/mypage' },
-		{ key: 'dashboard', text: '나의 대시보드', link: '/dashboard' },
-		{ key: 'search', text: '대시보드 검색', link: '/search' },
+		// { key: 'dashboard', text: '나의 대시보드', link: '/dashboard' },
+		// { key: 'search', text: '대시보드 검색', link: '/search' },
 		{ key: 'logout', text: '로그아웃하기', link: '/api/auth/logout' },
 	];
 
@@ -56,7 +56,6 @@ const Header: React.FC = (props) => {
 export default Header;
 
 const Navigation = styled.nav`
-	box-sizing: border-box;
 	padding: 5px 20px;
 	width: 100%;
 	height: 70px;
@@ -64,7 +63,7 @@ const Navigation = styled.nav`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background-color: rgb(171, 214, 243);
+	background-color: rgba(0, 0, 0, 0.2);
 `;
 
 const LogoBox = styled.button`
