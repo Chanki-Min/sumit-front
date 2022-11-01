@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { forwardRef, SyntheticEvent } from "react";
+import { forwardRef, SyntheticEvent, useEffect, useRef, useState } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import styled, { css } from "styled-components";
 import { PLACEHOLDER } from "../../../Contstants";
@@ -101,7 +101,7 @@ export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
         });
       }
     };
-    console.log("return1");
+
     return (
       <>
         <BulletContainer>
@@ -157,6 +157,74 @@ export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
   }
 );
 
+// TODO simple margin 구현
+export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
+  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+    const prop = block as simple_margin_props;
+    const [height, setHeight] = useState(50);
+    const innerRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+      onChange({
+        height: height,
+      });
+    }, [height]);
+
+    const handler = (mouseDownEvent: React.MouseEvent<HTMLButtonElement>) => {
+      mouseDownEvent.preventDefault();
+      mouseDownEvent.stopPropagation();
+      const startSize = { y: height };
+      const startPosition = {
+        y: mouseDownEvent.pageY,
+      };
+
+      function onMouseMove(mouseMoveEvent: MouseEvent) {
+        mouseDownEvent.preventDefault();
+        mouseDownEvent.stopPropagation();
+        setHeight(
+          (currentSize) => startSize.y - startPosition.y + mouseMoveEvent.pageY
+        );
+      }
+      function onMouseUp() {
+        mouseDownEvent.preventDefault();
+        mouseDownEvent.stopPropagation();
+        document.body.removeEventListener("mousemove", onMouseMove);
+      }
+
+      document.body.addEventListener("mousemove", onMouseMove);
+      document.body.addEventListener("mouseup", onMouseUp, { once: true });
+    };
+
+    return (
+      <div
+        tabIndex={0}
+        ref={innerRef}
+        className={classNames(styles.plain_text, "focusable")}
+        style={{ height, backgroundColor: "red", position: "relative" }}
+        onKeyDown={onKeyDown}
+      >
+        <DraggerButton
+          id="draghandle"
+          type="button"
+          onMouseDown={handler}
+        ></DraggerButton>
+      </div>
+    );
+  }
+);
+
+const DraggerButton = styled.button`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 10px;
+  opacity: 0;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
 const TickBox = styled.div<{ $checked: boolean }>`
   width: 20px;
   height: 20px;
@@ -210,12 +278,3 @@ const Bullet = styled.div<{
     }
   }}
 `;
-
-// TODO simple margin 구현
-export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
-  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
-    const prop = block as simple_margin_props;
-
-    return <span>Contents</span>;
-  }
-);
