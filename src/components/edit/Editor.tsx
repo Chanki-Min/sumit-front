@@ -204,6 +204,7 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
       <EditableBlock
         path="0"
         block={rootBlockQuery.data}
+        siblingList={[]}
         handleAddBlock={handleAddBlock}
         handleDeleteThis={handleDeleteThis}
         handleUpdateWithoutChildren={handleUpdateWithoutChildren}

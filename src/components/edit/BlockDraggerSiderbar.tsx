@@ -36,6 +36,18 @@ const BlockDraggerSidebar: React.FC<Props> = ({ visible }) => {
         iconSrc="/img/sidebarIcons/bulleted-list.png"
         blockType="bulleted_list"
       />
+      <SidebarElement
+        title="numbered 리스트"
+        desc="숫자로 정리된 리스트를 만들어보세요"
+        iconSrc="/img/sidebarIcons/numbered-list.png"
+        blockType="numbered_list"
+      />
+      {/* <SidebarElement
+        title="numbered 리스트"
+        desc="숫자로 정리된 리스트를 만들어보세요"
+        iconSrc="/img/sidebarIcons/divider.png"
+        blockType="simple_margin"
+      /> */}
     </Slider>
   );
 };

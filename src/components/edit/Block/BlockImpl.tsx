@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { forwardRef } from "react";
+import { forwardRef, SyntheticEvent } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import styled, { css } from "styled-components";
 import { PLACEHOLDER } from "../../../Contstants";
@@ -8,6 +8,8 @@ import {
   BlockProperties,
   plain_text_props,
   bulleted_list_props,
+  simple_margin_props,
+  numbered_list_props,
 } from "../../../models/properties";
 
 import styles from "./EditableBlock.module.scss";
@@ -16,6 +18,7 @@ export interface RenderderProps {
   block: Block;
   onChange: (newProps: BlockProperties) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  numberedListIndex?: number;
 }
 
 export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
@@ -118,6 +121,42 @@ export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
   }
 );
 
+export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
+  function RenderPlainText(
+    { block, onChange, onKeyDown, numberedListIndex },
+    ref
+  ) {
+    const prop = block as numbered_list_props;
+
+    const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if ("text" in block.properties) {
+        onChange({
+          text: e.target.value,
+        });
+      }
+    };
+
+    return (
+      <>
+        <BulletContainer>
+          <div id="numbered-list-index">
+            {numberedListIndex ? `${numberedListIndex}.` : "1."}
+          </div>
+        </BulletContainer>
+        <ContentEditable
+          className={classNames(styles.plain_text, "focusable")}
+          html={prop.properties.text}
+          tagName="p"
+          placeholder={PLACEHOLDER}
+          onChange={forwardContentEditableChange}
+          // innerRef={ref ?? undefined}
+          onKeyDown={onKeyDown}
+        />
+      </>
+    );
+  }
+);
+
 const TickBox = styled.div<{ $checked: boolean }>`
   width: 20px;
   height: 20px;
@@ -171,3 +210,12 @@ const Bullet = styled.div<{
     }
   }}
 `;
+
+// TODO simple margin 구현
+export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
+  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+    const prop = block as simple_margin_props;
+
+    return <span>Contents</span>;
+  }
+);
