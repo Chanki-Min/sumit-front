@@ -36,8 +36,6 @@ const EditPage = ({ user }: PageProps) => {
     return <></>;
   }
 
-  console.log(pageQuery);
-
   return (
     <>
       <MenuBar
@@ -49,10 +47,10 @@ const EditPage = ({ user }: PageProps) => {
 
       <DndProvider backend={HTML5Backend}>
         <SliderParent>
-          <SlidesSelectionSidebar
+          {/* <SlidesSelectionSidebar
             visible={showLeftSidebar}
             slides={pageQuery.data.slides}
-          />
+          /> */}
           <EditArea>
             <Editor rootBlockId={pageQuery.data.slides[0].root_block.uuid} />
           </EditArea>

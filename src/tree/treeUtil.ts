@@ -138,6 +138,73 @@ export function getBlockPrototype(
           children: [],
         };
       }
+    case "bulleted_list":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "bulleted_list",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "bulleted_list",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
+    case "numbered_list":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "numbered_list",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "numbered_list",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
+
+    case "simple_margin":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "simple_margin",
+          properties: {
+            height: 10,
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "simple_margin",
+          properties: {
+            height: 10,
+          },
+          children: [],
+        };
+      }
 
     default:
       if (options) {
