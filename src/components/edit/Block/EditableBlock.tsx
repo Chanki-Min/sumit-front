@@ -58,7 +58,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   const textValue = useRef<string | null>(
     typeof block.properties === "object" && "text" in block.properties
       ? block.properties.text
-      : null
+      : ""
   );
   useEffect(() => {
     if ("text" in block.properties) {
@@ -102,6 +102,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
         })
       );
     }
+
     if (key === "Backspace" && textValue.current === "") {
       e.preventDefault();
       e.stopPropagation();
