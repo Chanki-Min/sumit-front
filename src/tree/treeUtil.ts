@@ -272,6 +272,76 @@ export function getBlockPrototype(
         };
       }
 
+    case "grid_1x2":
+      const blockId = uuidv4();
+
+      if (options) {
+        return {
+          uuid: blockId,
+          type: "grid_1x2",
+          properties: {
+            row_ratios: [50, 50],
+          },
+          children: [
+            getBlockPrototype("plain_text", {
+              order: 0,
+              parent: blockId,
+            }),
+            getBlockPrototype("grid_divider", {
+              order: 1,
+              parent: blockId,
+            }),
+            getBlockPrototype("plain_text", {
+              order: 2,
+              parent: blockId,
+            }),
+          ],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: blockId,
+          type: "grid_1x2",
+          properties: {
+            row_ratios: [50, 50],
+          },
+          children: [
+            getBlockPrototype("plain_text", {
+              order: 0,
+              parent: blockId,
+            }),
+            getBlockPrototype("grid_divider", {
+              order: 1,
+              parent: blockId,
+            }),
+            getBlockPrototype("plain_text", {
+              order: 2,
+              parent: blockId,
+            }),
+          ],
+        };
+      }
+
+    case "grid_divider":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "grid_divider",
+          properties: {},
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "grid_divider",
+          properties: {},
+          children: [],
+        };
+      }
+
     default:
       if (options) {
         return {

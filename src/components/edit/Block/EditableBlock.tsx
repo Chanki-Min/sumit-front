@@ -289,6 +289,82 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     );
   }
 
+  if (block.type === "grid_divider") {
+    return null;
+  }
+
+  if (block.type === "grid_1x2") {
+    // TODO GRID 블록 구현
+
+    const dividerIndex = block.children.findIndex(
+      (b) => b.type === "grid_divider"
+    );
+
+    const left = block.children.slice(0, dividerIndex);
+    const right = block.children.slice(dividerIndex + 1);
+
+    console.log(left, right, dividerIndex);
+
+    return (
+      <>
+        <div style={{ position: "relative" }}>
+          <Dropzone
+            parentId={block.parent}
+            key={`dropzone_${path}`}
+            path={path}
+            handleMoveToPath={handleMoveToPath}
+            handleAddBlock={handleAddBlock}
+          />
+          <DraggerContainer ref={drag} id={`path-${path}`}>
+            <div
+              style={{
+                marginLeft: "15px",
+                position: "relative",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                {left.map((cb, index) => {
+                  return (
+                    <EditableBlock
+                      path={`${path}-${index}`}
+                      key={`${path}-${index}-${cb.uuid}`}
+                      block={cb}
+                      siblingList={block.children}
+                      handleAddBlock={handleAddBlock}
+                      handleDeleteThis={handleDeleteThis}
+                      handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+                      handleMoveToPath={handleMoveToPath}
+                      handleIndentation={handleIndentation}
+                    />
+                  );
+                })}
+              </div>
+              <div>
+                {right.map((cb, index) => {
+                  console.log(index, dividerIndex, index + dividerIndex);
+                  return (
+                    <EditableBlock
+                      path={`${path}-${index + dividerIndex + 1}`}
+                      key={`${path}-${index + dividerIndex + 1}-${cb.uuid}`}
+                      block={cb}
+                      siblingList={block.children}
+                      handleAddBlock={handleAddBlock}
+                      handleDeleteThis={handleDeleteThis}
+                      handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+                      handleMoveToPath={handleMoveToPath}
+                      handleIndentation={handleIndentation}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </DraggerContainer>
+        </div>
+      </>
+    );
+  }
   // TODO: css 고치기 (너무 inline style에 의존하는데, 고쳐야 합니다)
   return (
     <>

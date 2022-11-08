@@ -10,7 +10,8 @@ export type BlockFields =
   | media_file_props
   | carousel_slide
   | simple_margin_props
-  | grid_props;
+  | grid_props
+  | grid_divider_props;
 
 export type BlockTypes = BlockFields["type"];
 
@@ -99,16 +100,14 @@ export interface simple_margin_props {
   };
 }
 
-interface grid_props {
-  type: "grid";
+export interface grid_props {
+  type: "grid_1x2" | "grid_1x3";
   properties: {
-    row_size: number;
-    col_size: number;
-
     row_ratios: number[];
     col_ratios: number[];
-
-    width: number;
-    height: number;
   };
+}
+export interface grid_divider_props {
+  type: "grid_divider";
+  properties: {};
 }

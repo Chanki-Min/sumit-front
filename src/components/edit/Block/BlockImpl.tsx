@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { forwardRef, SyntheticEvent, useEffect, useRef, useState } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
+import { GridProps } from "semantic-ui-react";
 import styled, { css } from "styled-components";
 import { PLACEHOLDER } from "../../../Contstants";
 import { Block } from "../../../models/block";
@@ -55,7 +56,7 @@ export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value,
+          text: e.target.value.normalize("NFKC"),
         });
       }
     };

@@ -66,6 +66,18 @@ const BlockDraggerSidebar: React.FC<Props> = ({ visible }) => {
         iconSrc="/img/sidebarIcons/divider.png"
         blockType="simple_margin"
       />
+      <SidebarElement
+        title="2열 구분 블록"
+        desc="2개의 열에 각각 블록을 만듭니다."
+        iconSrc="/img/sidebarIcons/grid.png"
+        blockType="grid_1x2"
+      />
+      {/* <SidebarElement
+        title="3열 구분 블록"
+        desc="3개의 열에 각각 블록을 만듭니다."
+        iconSrc="/img/sidebarIcons/grid.png"
+        blockType="grid_1x3"
+      /> */}
     </Slider>
   );
 };
