@@ -6,6 +6,7 @@ import { DraggerContainer } from "../../../styles/Block";
 import { IWithPath } from "../../../tree/tree";
 import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
+import { moveFocus } from "../Editor";
 import {
   RenderBulletedList,
   RenderHeading1,
@@ -39,6 +40,22 @@ interface EditableBlockProps {
     directon: "left" | "right"
   ) => void;
 }
+
+const getCarrotPosition = () => {
+  var sel = document.getSelection();
+
+  sel.modify("extend", "backward", "paragraphboundary");
+
+  var pos = sel.toString().length;
+  if (sel.anchorNode != undefined) sel.collapseToEnd();
+
+  return {
+    isPrevExist:
+      (sel.focusNode.previousSibling as HTMLBRElement)?.tagName === "BR",
+    pos: pos,
+    isNextExist: (sel.focusNode.nextSibling as HTMLBRElement)?.tagName === "BR",
+  };
+};
 
 const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   const {
@@ -88,6 +105,45 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     const prevKey = previousKey.current;
+
+    if (key === "ArrowUp") {
+      const carrotPos = getCarrotPosition();
+      console.log(carrotPos);
+      if (carrotPos.isPrevExist) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const splitPath = path.split("-").map((s) => Number(s));
+
+      moveFocus(
+        [
+          ...splitPath.slice(0, splitPath.length - 1),
+          splitPath.at(-1) - 1,
+        ].join("-")
+      );
+    }
+
+    if (key === "ArrowDown") {
+      const carrotPos = getCarrotPosition();
+      console.log(carrotPos);
+      if (carrotPos.isNextExist) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+      const splitPath = path.split("-").map((s) => Number(s));
+      moveFocus(
+        [
+          ...splitPath.slice(0, splitPath.length - 1),
+          splitPath.at(-1) + 1,
+        ].join("-")
+      );
+    }
+
     //shift enter 지원
     if (key === "Enter" && prevKey !== "Shift") {
       e.preventDefault();
@@ -160,7 +216,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   );
 
   let renderElement: ReactElement<any, any> | null = <></>;
-  console.log(block.type);
+
   switch (block.type) {
     case "plain_text":
       renderElement = (
@@ -168,7 +224,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
@@ -178,7 +234,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
@@ -188,7 +244,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
@@ -198,7 +254,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
@@ -218,7 +274,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
@@ -236,7 +292,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
           numberedListIndex={myIndex}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
@@ -302,8 +358,6 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
     const left = block.children.slice(0, dividerIndex);
     const right = block.children.slice(dividerIndex + 1);
-
-    console.log(left, right, dividerIndex);
 
     return (
       <>

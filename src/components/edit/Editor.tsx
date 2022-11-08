@@ -215,7 +215,7 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
   );
 };
 
-const moveFocus = (path: string) => {
+export const moveFocus = (path: string) => {
   if (IS_SERVER_SIDE) {
     return;
   }
