@@ -41,7 +41,7 @@ export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
         tagName="p"
         placeholder={PLACEHOLDER}
         onChange={forwardContentEditableChange}
-        // innerRef={ref ?? undefined}
+        innerRef={ref ?? undefined}
         onKeyDown={onKeyDown}
       />
     );
@@ -51,7 +51,6 @@ export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
 export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
   function RenderHeading1({ block, onChange, onKeyDown }, ref) {
     const prop = block as heading_props;
-    console.log("h1");
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
@@ -67,7 +66,7 @@ export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
         tagName="h1"
         placeholder={PLACEHOLDER}
         onChange={forwardContentEditableChange}
-        // innerRef={ref ?? undefined}
+        innerRef={ref ?? undefined}
         onKeyDown={onKeyDown}
       />
     );
@@ -92,7 +91,7 @@ export const RenderHeading2 = forwardRef<HTMLElement, RenderderProps>(
         tagName="h2"
         placeholder={PLACEHOLDER}
         onChange={forwardContentEditableChange}
-        // innerRef={ref ?? undefined}
+        innerRef={ref ?? undefined}
         onKeyDown={onKeyDown}
       />
     );
@@ -117,7 +116,7 @@ export const RenderHeading3 = forwardRef<HTMLElement, RenderderProps>(
         tagName="h3"
         placeholder={PLACEHOLDER}
         onChange={forwardContentEditableChange}
-        // innerRef={ref ?? undefined}
+        innerRef={ref ?? undefined}
         onKeyDown={onKeyDown}
       />
     );
@@ -157,7 +156,7 @@ export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
             tagName="p"
             placeholder={PLACEHOLDER}
             onChange={forwardContentEditableChange}
-            // innerRef={ref ?? undefined}
+            innerRef={ref ?? undefined}
             onKeyDown={onKeyDown}
           />
         </>
@@ -191,7 +190,7 @@ export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
           tagName="p"
           placeholder={PLACEHOLDER}
           onChange={forwardContentEditableChange}
-          // innerRef={ref ?? undefined}
+          innerRef={ref ?? undefined}
           onKeyDown={onKeyDown}
         />
       </>
@@ -227,7 +226,7 @@ export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
           tagName="p"
           placeholder={PLACEHOLDER}
           onChange={forwardContentEditableChange}
-          // innerRef={ref ?? undefined}
+          innerRef={ref ?? undefined}
           onKeyDown={onKeyDown}
         />
       </>

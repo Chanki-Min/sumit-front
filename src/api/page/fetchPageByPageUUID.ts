@@ -44,8 +44,6 @@ export const prefetchPageByIdQuerySsr = (
       }
     );
 
-    console.log(pageRes.data);
-
     return pageRes.data;
   });
 };
