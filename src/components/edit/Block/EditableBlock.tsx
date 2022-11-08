@@ -8,6 +8,9 @@ import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
 import {
   RenderBulletedList,
+  RenderHeading1,
+  RenderHeading2,
+  RenderHeading3,
   RenderNumberedList,
   RenderPlainText,
   RenderSimpleMargin,
@@ -157,10 +160,41 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   );
 
   let renderElement: ReactElement<any, any> | null = <></>;
+  console.log(block.type);
   switch (block.type) {
     case "plain_text":
       renderElement = (
         <RenderPlainText
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          // ref={contentEditable}
+        />
+      );
+      break;
+    case "heading_1":
+      renderElement = (
+        <RenderHeading1
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          // ref={contentEditable}
+        />
+      );
+      break;
+    case "heading_2":
+      renderElement = (
+        <RenderHeading2
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          // ref={contentEditable}
+        />
+      );
+      break;
+    case "heading_3":
+      renderElement = (
+        <RenderHeading3
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}

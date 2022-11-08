@@ -114,6 +114,72 @@ export function getBlockPrototype(
           children: [],
         };
       }
+    case "heading_1":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "heading_1",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "heading_1",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
+    case "heading_2":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "heading_2",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "heading_2",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
+    case "heading_3":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "heading_3",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "heading_3",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
     case "to_do_list":
       if (options) {
         return {

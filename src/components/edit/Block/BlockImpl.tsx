@@ -7,6 +7,7 @@ import { Block } from "../../../models/block";
 import {
   BlockProperties,
   plain_text_props,
+  heading_props,
   bulleted_list_props,
   simple_margin_props,
   numbered_list_props,
@@ -37,6 +38,82 @@ export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
         className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="p"
+        placeholder={PLACEHOLDER}
+        onChange={forwardContentEditableChange}
+        // innerRef={ref ?? undefined}
+        onKeyDown={onKeyDown}
+      />
+    );
+  }
+);
+
+export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
+  function RenderHeading1({ block, onChange, onKeyDown }, ref) {
+    const prop = block as heading_props;
+    console.log("h1");
+
+    const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if ("text" in block.properties) {
+        onChange({
+          text: e.target.value,
+        });
+      }
+    };
+    return (
+      <ContentEditable
+        className={classNames(styles.plain_text, "focusable")}
+        html={prop.properties.text}
+        tagName="h1"
+        placeholder={PLACEHOLDER}
+        onChange={forwardContentEditableChange}
+        // innerRef={ref ?? undefined}
+        onKeyDown={onKeyDown}
+      />
+    );
+  }
+);
+
+export const RenderHeading2 = forwardRef<HTMLElement, RenderderProps>(
+  function RenderHeading2({ block, onChange, onKeyDown }, ref) {
+    const prop = block as heading_props;
+
+    const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if ("text" in block.properties) {
+        onChange({
+          text: e.target.value,
+        });
+      }
+    };
+    return (
+      <ContentEditable
+        className={classNames(styles.plain_text, "focusable")}
+        html={prop.properties.text}
+        tagName="h2"
+        placeholder={PLACEHOLDER}
+        onChange={forwardContentEditableChange}
+        // innerRef={ref ?? undefined}
+        onKeyDown={onKeyDown}
+      />
+    );
+  }
+);
+
+export const RenderHeading3 = forwardRef<HTMLElement, RenderderProps>(
+  function RenderHeading3({ block, onChange, onKeyDown }, ref) {
+    const prop = block as heading_props;
+
+    const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if ("text" in block.properties) {
+        onChange({
+          text: e.target.value,
+        });
+      }
+    };
+    return (
+      <ContentEditable
+        className={classNames(styles.plain_text, "focusable")}
+        html={prop.properties.text}
+        tagName="h3"
         placeholder={PLACEHOLDER}
         onChange={forwardContentEditableChange}
         // innerRef={ref ?? undefined}
@@ -92,7 +169,7 @@ export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
 
 export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
   function RenderPlainText({ block, onChange, onKeyDown }, ref) {
-    const prop = block as plain_text_props;
+    const prop = block as bulleted_list_props;
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
@@ -157,7 +234,6 @@ export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
   }
 );
 
-// TODO simple margin 구현
 export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
   function RenderPlainText({ block, onChange, onKeyDown }, ref) {
     const prop = block as simple_margin_props;

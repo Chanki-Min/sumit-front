@@ -27,7 +27,7 @@ export interface plain_text_props {
   };
 }
 
-interface heading_props {
+export interface heading_props {
   type: "heading_1" | "heading_2" | "heading_3";
   properties: {
     text: string; // html strings, should be sanitized

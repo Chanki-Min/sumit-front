@@ -25,6 +25,24 @@ const BlockDraggerSidebar: React.FC<Props> = ({ visible }) => {
         blockType="plain_text"
       />
       <SidebarElement
+        title="제목 1"
+        desc="큰 제목을 사용해 주제를 설명하세요"
+        iconSrc="/img/sidebarIcons/heading-1.png"
+        blockType="heading_1"
+      />
+      <SidebarElement
+        title="제목 2"
+        desc="중간 제목을 사용해 섹션을 구분하세요"
+        iconSrc="/img/sidebarIcons/heading-2.png"
+        blockType="heading_2"
+      />
+      <SidebarElement
+        title="제목 3"
+        desc="작은 제목을 사용해 문단을 나눠보세요"
+        iconSrc="/img/sidebarIcons/heading-3.png"
+        blockType="heading_3"
+      />
+      <SidebarElement
         title="to-do 리스트"
         desc="to-do 리스트로 진행사항을 정리하세요"
         iconSrc="/img/sidebarIcons/list-check-solid.svg"
