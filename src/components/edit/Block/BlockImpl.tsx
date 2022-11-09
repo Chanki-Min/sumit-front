@@ -334,6 +334,7 @@ export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
         onKeyDown={onKeyDown}
       >
         <DraggerButton
+          $editable={editable}
           id="draghandle"
           type="button"
           onMouseDown={handler}
@@ -343,16 +344,20 @@ export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
   }
 );
 
-const DraggerButton = styled.button`
+const DraggerButton = styled.button<{ $editable: boolean }>`
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 10px;
   opacity: 0;
 
-  &:hover {
-    opacity: 1;
-  }
+  ${(p) =>
+    p.$editable &&
+    css`
+      &:hover {
+        opacity: 1;
+      }
+    `}
 `;
 
 const TickBox = styled.div<{ $checked: boolean }>`
