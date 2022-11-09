@@ -5,6 +5,7 @@ import { GridProps } from "semantic-ui-react";
 import styled, { css } from "styled-components";
 import { PLACEHOLDER } from "../../../Contstants";
 import { Block } from "../../../models/block";
+import * as Hangul from "hangul-js";
 import {
   BlockProperties,
   plain_text_props,
@@ -30,7 +31,7 @@ export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value,
+          text: Hangul.assemble(Hangul.disassemble(e.target.value)),
         });
       }
     };
@@ -55,7 +56,7 @@ export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value.normalize("NFKC"),
+          text: Hangul.assemble(Hangul.disassemble(e.target.value)),
         });
       }
     };
@@ -80,10 +81,11 @@ export const RenderHeading2 = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value,
+          text: Hangul.assemble(Hangul.disassemble(e.target.value)),
         });
       }
     };
+
     return (
       <ContentEditable
         className={classNames(styles.plain_text, "focusable")}
@@ -105,7 +107,7 @@ export const RenderHeading3 = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value,
+          text: Hangul.assemble(Hangul.disassemble(e.target.value)),
         });
       }
     };
@@ -138,7 +140,7 @@ export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value,
+          text: Hangul.assemble(Hangul.disassemble(e.target.value)),
         });
       }
     };
@@ -174,7 +176,7 @@ export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value,
+          text: Hangul.assemble(Hangul.disassemble(e.target.value)),
         });
       }
     };
@@ -208,7 +210,7 @@ export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
       if ("text" in block.properties) {
         onChange({
-          text: e.target.value,
+          text: Hangul.assemble(Hangul.disassemble(e.target.value)),
         });
       }
     };
