@@ -21,7 +21,10 @@ interface EditorProps {
 const throttledSync = debounce(
   (block: Block) => {
     try {
-      axios.post("/api/blocks/bulk", block);
+      axios.post("/api/blocks/bulk", {
+        ...block,
+        blockJson: null,
+      });
     } catch (e) {
       console.error(e);
     }
