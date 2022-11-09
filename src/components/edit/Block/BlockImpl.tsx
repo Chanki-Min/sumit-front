@@ -22,13 +22,18 @@ export interface RenderderProps {
   onChange: (newProps: BlockProperties) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   numberedListIndex?: number;
+  editable: boolean;
 }
 
 export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
-  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+  function RenderPlainText({ block, onChange, onKeyDown, editable }, ref) {
     const prop = block as plain_text_props;
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if (!editable) {
+        return;
+      }
+
       if ("text" in block.properties) {
         onChange({
           text: Hangul.assemble(Hangul.disassemble(e.target.value)),
@@ -37,6 +42,7 @@ export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
     };
     return (
       <ContentEditable
+        disabled={!editable}
         className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="p"
@@ -50,10 +56,14 @@ export const RenderPlainText = forwardRef<HTMLElement, RenderderProps>(
 );
 
 export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
-  function RenderHeading1({ block, onChange, onKeyDown }, ref) {
+  function RenderHeading1({ block, onChange, onKeyDown, editable }, ref) {
     const prop = block as heading_props;
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if (!editable) {
+        return;
+      }
+
       if ("text" in block.properties) {
         onChange({
           text: Hangul.assemble(Hangul.disassemble(e.target.value)),
@@ -62,6 +72,7 @@ export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
     };
     return (
       <ContentEditable
+        disabled={!editable}
         className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="h1"
@@ -75,10 +86,14 @@ export const RenderHeading1 = forwardRef<HTMLElement, RenderderProps>(
 );
 
 export const RenderHeading2 = forwardRef<HTMLElement, RenderderProps>(
-  function RenderHeading2({ block, onChange, onKeyDown }, ref) {
+  function RenderHeading2({ block, onChange, onKeyDown, editable }, ref) {
     const prop = block as heading_props;
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if (!editable) {
+        return;
+      }
+
       if ("text" in block.properties) {
         onChange({
           text: Hangul.assemble(Hangul.disassemble(e.target.value)),
@@ -88,6 +103,7 @@ export const RenderHeading2 = forwardRef<HTMLElement, RenderderProps>(
 
     return (
       <ContentEditable
+        disabled={!editable}
         className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="h2"
@@ -101,10 +117,14 @@ export const RenderHeading2 = forwardRef<HTMLElement, RenderderProps>(
 );
 
 export const RenderHeading3 = forwardRef<HTMLElement, RenderderProps>(
-  function RenderHeading3({ block, onChange, onKeyDown }, ref) {
+  function RenderHeading3({ block, onChange, onKeyDown, editable }, ref) {
     const prop = block as heading_props;
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if (!editable) {
+        return;
+      }
+
       if ("text" in block.properties) {
         onChange({
           text: Hangul.assemble(Hangul.disassemble(e.target.value)),
@@ -113,6 +133,7 @@ export const RenderHeading3 = forwardRef<HTMLElement, RenderderProps>(
     };
     return (
       <ContentEditable
+        disabled={!editable}
         className={classNames(styles.plain_text, "focusable")}
         html={prop.properties.text}
         tagName="h3"
@@ -126,10 +147,14 @@ export const RenderHeading3 = forwardRef<HTMLElement, RenderderProps>(
 );
 
 export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
-  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+  function RenderPlainText({ block, onChange, onKeyDown, editable }, ref) {
     const prop = block as plain_text_props;
 
     const forwardCheck = () => {
+      if (!editable) {
+        return;
+      }
+
       if ("checked" in block.properties) {
         onChange({
           checked: !block.properties.checked,
@@ -138,6 +163,10 @@ export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
     };
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if (!editable) {
+        return;
+      }
+
       if ("text" in block.properties) {
         onChange({
           text: Hangul.assemble(Hangul.disassemble(e.target.value)),
@@ -153,6 +182,7 @@ export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
             </div> */}
           <TickBox $checked={block.properties.checked} onClick={forwardCheck} />
           <ContentEditable
+            disabled={!editable}
             className={classNames(styles.plain_text, "focusable")}
             html={prop.properties.text}
             tagName="p"
@@ -170,10 +200,14 @@ export const RenderTodo = forwardRef<HTMLElement, RenderderProps>(
 );
 
 export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
-  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+  function RenderPlainText({ block, onChange, onKeyDown, editable }, ref) {
     const prop = block as bulleted_list_props;
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if (!editable) {
+        return;
+      }
+
       if ("text" in block.properties) {
         onChange({
           text: Hangul.assemble(Hangul.disassemble(e.target.value)),
@@ -187,6 +221,7 @@ export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
           <Bullet $shape="fill-circle"></Bullet>
         </BulletContainer>
         <ContentEditable
+          disabled={!editable}
           className={classNames(styles.plain_text, "focusable")}
           html={prop.properties.text}
           tagName="p"
@@ -202,12 +237,16 @@ export const RenderBulletedList = forwardRef<HTMLElement, RenderderProps>(
 
 export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
   function RenderPlainText(
-    { block, onChange, onKeyDown, numberedListIndex },
+    { block, onChange, onKeyDown, numberedListIndex, editable },
     ref
   ) {
     const prop = block as numbered_list_props;
 
     const forwardContentEditableChange = (e: ContentEditableEvent) => {
+      if (!editable) {
+        return;
+      }
+
       if ("text" in block.properties) {
         onChange({
           text: Hangul.assemble(Hangul.disassemble(e.target.value)),
@@ -223,6 +262,7 @@ export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
           </div>
         </BulletContainer>
         <ContentEditable
+          disabled={!editable}
           className={classNames(styles.plain_text, "focusable")}
           html={prop.properties.text}
           tagName="p"
@@ -237,18 +277,26 @@ export const RenderNumberedList = forwardRef<HTMLElement, RenderderProps>(
 );
 
 export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
-  function RenderPlainText({ block, onChange, onKeyDown }, ref) {
+  function RenderPlainText({ block, onChange, onKeyDown, editable }, ref) {
     const prop = block as simple_margin_props;
-    const [height, setHeight] = useState(50);
+    const [height, setHeight] = useState(prop.properties.height ?? 50);
     const innerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
+      if (!editable) {
+        return;
+      }
+
       onChange({
         height: height,
       });
-    }, [height]);
+    }, [height, editable]);
 
     const handler = (mouseDownEvent: React.MouseEvent<HTMLButtonElement>) => {
+      if (!editable) {
+        return;
+      }
+
       mouseDownEvent.preventDefault();
       mouseDownEvent.stopPropagation();
       const startSize = { y: height };
@@ -278,7 +326,11 @@ export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
         tabIndex={0}
         ref={innerRef}
         className={classNames(styles.plain_text, "focusable")}
-        style={{ height, backgroundColor: "red", position: "relative" }}
+        style={{
+          height,
+          backgroundColor: editable ? "red" : undefined,
+          position: "relative",
+        }}
         onKeyDown={onKeyDown}
       >
         <DraggerButton

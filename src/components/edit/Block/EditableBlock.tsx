@@ -1,3 +1,5 @@
+import { r } from "msw/lib/glossary-297d38ba";
+import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
 import { Block } from "../../../models/block";
@@ -67,6 +69,9 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     handleIndentation,
     path,
   } = props;
+
+  const router = useRouter();
+  const isEditable = router.pathname.startsWith("/edit");
 
   const blockRef = useRef<Block>(block);
 
@@ -211,6 +216,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
+      canDrag: isEditable,
     }),
     [path, block]
   );
@@ -221,6 +227,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "plain_text":
       renderElement = (
         <RenderPlainText
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -231,6 +238,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "heading_1":
       renderElement = (
         <RenderHeading1
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -241,6 +249,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "heading_2":
       renderElement = (
         <RenderHeading2
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -251,6 +260,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "heading_3":
       renderElement = (
         <RenderHeading3
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -261,6 +271,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "to_do_list":
       renderElement = (
         <RenderTodo
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -271,6 +282,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "bulleted_list":
       renderElement = (
         <RenderBulletedList
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -288,6 +300,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
       renderElement = (
         <RenderNumberedList
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -299,6 +312,7 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "simple_margin":
       renderElement = (
         <RenderSimpleMargin
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -361,7 +375,12 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
     return (
       <>
-        <div style={{ position: "relative" }}>
+        <div
+          style={{
+            position: "relative",
+            border: isEditable ? ".5px dashed black" : undefined,
+          }}
+        >
           <Dropzone
             parentId={block.parent}
             key={`dropzone_${path}`}
@@ -422,7 +441,12 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   // TODO: css 고치기 (너무 inline style에 의존하는데, 고쳐야 합니다)
   return (
     <>
-      <div style={{ position: "relative" }}>
+      <div
+        style={{
+          position: "relative",
+          border: isEditable ? ".5px dashed black" : undefined,
+        }}
+      >
         <Dropzone
           parentId={block.parent}
           key={`dropzone_${path}`}
