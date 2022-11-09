@@ -77,7 +77,7 @@ export const getServerSideProps = withPageAuthRequired<PageProps>({
     // Prefetch page data
     // TODO: 인증 추가
     const queryClient = new QueryClient();
-    await prefetchPageByIdQuerySsr(
+    const page = await prefetchPageByIdQuerySsr(
       queryClient,
       context.params?.pageid as string,
       accessToken

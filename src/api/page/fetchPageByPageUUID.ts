@@ -34,7 +34,7 @@ export const prefetchPageByIdQuerySsr = (
     throw new Error("preFetching should be called within server-side only");
   }
 
-  return queryClient.prefetchQuery(["page", pageId], async () => {
+  return queryClient.fetchQuery(["page", pageId], async () => {
     const pageRes = await axios.get<Page>(
       `http://localhost:${8000}/pages/${pageId}`,
       {
