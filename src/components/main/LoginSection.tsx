@@ -40,7 +40,7 @@ const LoginSection: React.FC = () => {
 						</Button>
 					</Link>
 				</BtnBox>
-				<Image src='/img/mainpage.png' width="2000px" height={4844}/>
+				<Image src='/img/mainpage.png' width="1500px" height={4844}/>
 			</Container>
 		);
 	}
