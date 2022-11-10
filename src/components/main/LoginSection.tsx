@@ -1,18 +1,30 @@
 import { useUser } from '@auth0/nextjs-auth0';
+import { useMediaQuery } from 'react-responsive';
 import Link from 'next/link';
 import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
+import Header from '../../components/main/Header';
+import Image from 'next/image';
 
 const LoginSection: React.FC = () => {
+
 	const { user, isLoading } = useUser();
 
+	const isPC = useMediaQuery({ minWidth: 768 });
+
 	if (isLoading) {
-		return <Container></Container>;
+		return(
+		<Container></Container>)
+	
+		// <Wrapper><Header isPC={isPC}>
+		{/* </Header></Wrapper>; */}
 	}
 
 	if (typeof user === 'undefined') {
 		return (
+			
 			<Container>
+				
 				<h1>로그인하고 sumit을 시작해보세요!</h1>
 				<BtnBox>
 					<Link href={'/api/auth/login'} passHref>
@@ -28,12 +40,14 @@ const LoginSection: React.FC = () => {
 						</Button>
 					</Link>
 				</BtnBox>
-			</Container>
+				<Image src='/img/mainpage.png' width={1440} height={4844}/>
+				</Container>
 		);
 	}
 
 	return (
 		<Container>
+			<Image src='/img/mainpage.png' width={1440} height={4844}/>
 			<h1>환영합니다, {user.name}님!</h1>
 			<BtnBox>
 				<Link href={'/dashboard'} passHref>
@@ -54,6 +68,11 @@ const LoginSection: React.FC = () => {
 };
 
 export default LoginSection;
+
+const Wrapper = styled.div`
+  background-color: ${({ theme }) => theme.palette.mono.white};
+  
+`;
 
 const Container = styled.div`
 	box-sizing: border-box;
