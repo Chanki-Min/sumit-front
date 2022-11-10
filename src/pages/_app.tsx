@@ -32,7 +32,7 @@ function SumitApp({
         <title>boilerplate</title>
       </Head>
       <GlobalStyle />
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient} >
         <Hydrate state={pageProps.dehydratedState}>
           {/* <ThemeProvider> */}
           <UserProvider>

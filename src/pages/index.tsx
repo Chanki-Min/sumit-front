@@ -20,7 +20,7 @@ export default Home;
 const MainBackground = styled.div`
 	display: flex;
 	background-repeat : no-repeat;
-    background-size : cover;
+    /* background-size : cover; */
 `
 
 const LeftWing = styled.section`

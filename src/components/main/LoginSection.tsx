@@ -40,14 +40,14 @@ const LoginSection: React.FC = () => {
 						</Button>
 					</Link>
 				</BtnBox>
-				<Image src='/img/mainpage.png' width={1440} height={4844}/>
-				</Container>
+				<Image src='/img/mainpage.png' width="2000px" height={4844}/>
+			</Container>
 		);
 	}
 
 	return (
 		<Container>
-			<Image src='/img/mainpage.png' width={1440} height={4844}/>
+			<Image src='/img/mainpage.png' width="2000px" height={4844}/>
 			<h1>환영합니다, {user.name}님!</h1>
 			<BtnBox>
 				<Link href={'/dashboard'} passHref>

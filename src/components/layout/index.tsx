@@ -19,9 +19,10 @@ const Layout: React.FC<PropsWithChildren> = (props) => {
 export default Layout;
 
 const LayoutContent = styled.section`
-	position: relative;
+	/* position: relative; */
 	width: 100%;
 	/* margin-top: 60px; */
-	padding: 0.05px; // to disable margin collapsing
+	/* padding: 0.05px; // to disable margin collapsing */
 	height: calc(100% - 70px);
+	border: 1px solid black;
 `;
