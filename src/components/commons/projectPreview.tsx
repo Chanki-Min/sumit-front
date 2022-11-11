@@ -1,6 +1,13 @@
 import { OmittedPage } from '../../models/page';
 
-import { Button, Dropdown, Image, Form } from 'semantic-ui-react';
+import {
+	Button,
+	Dropdown,
+	Image,
+	Form,
+	Input,
+	TextArea,
+} from 'semantic-ui-react';
 
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -42,14 +49,15 @@ const DeleteModal = ({ project }: { project: OmittedPage }) => {
 
 	return (
 		<ModalWrapper>
-			<h1 className='modal_title'>{`${title} 페이지를 삭제하시겠어요?`}</h1>
+			<h3>삭제</h3>
+			<p>{`${title} 페이지를 삭제하시겠어요?`}</p>
 			<Modal.Close asChild>
-				<button className='modal_btn'>취소</button>
+				<Button floated='right' onClick={handleDelete}>
+					삭제
+				</Button>
 			</Modal.Close>
 			<Modal.Close asChild>
-				<button className='modal_btn' onClick={handleDelete}>
-					삭제
-				</button>
+				<Button floated='right'>취소</Button>
 			</Modal.Close>
 		</ModalWrapper>
 	);
@@ -62,6 +70,11 @@ const NameModal = ({ project }: { project: OmittedPage }) => {
 		title,
 		description,
 	});
+
+	const [toggle, setToggle] = useState(false);
+	const clickedToggle = () => {
+		setToggle((prev) => !prev);
+	};
 
 	const handleChange: ChangeEventHandler<
 		HTMLInputElement | HTMLTextAreaElement
@@ -78,42 +91,48 @@ const NameModal = ({ project }: { project: OmittedPage }) => {
 	};
 
 	return (
-		<Form>
-			<Form.Input
-				fluid
-				className='modal_title'
-				label='제목'
-				placeholder={title}
-				onChange={handleChange}
-			/>
-			<Form.Input
-				fluid
-				className='modal_title'
-				label='설명'
-				placeholder={description}
-				onChange={handleChange}
-			/>
-			<Form.Group inline>
-				<label className='modal_title'>공개 여부</label>
-				<Form.Radio
-					label='공개'
-					value='sm'
-					// checked={value === 'sm'}
-					// onChange={this.handleChange}
-				/>
-				<Form.Radio
-					label='비공개'
-					value='md'
-					// checked={value === 'md'}
-					// onChange={this.handleChange}
-				/>
-			</Form.Group>
-			<Modal.Close asChild>
-				<button className='modal_btn' onClick={handleSubmit}>
-					저장
-				</button>
-			</Modal.Close>
-		</Form>
+		<ModalWrapper>
+			<Form>
+				<h3>이름 변경</h3>
+				<Form.Group inline>
+					<label className='modal_title'>제목</label>
+					<Input
+						focus
+						className='modal_input'
+						placeholder={title}
+						onChange={handleChange}
+						style={{ width: '400px' }}
+					/>
+				</Form.Group>
+				<Form.Group inline>
+					<label className='modal_title'>설명</label>
+					<TextArea
+						focus
+						className='modal_input'
+						placeholder={description}
+						onChange={handleChange}
+						style={{ width: '400px' }}
+					/>
+				</Form.Group>
+				<Form.Group inline>
+					<label className='modal_title'>공개 설정</label>
+					<Button size='tiny' onClick={clickedToggle}>
+						{!toggle ? (
+							<p style={{ color: 'red' }}>비공개</p>
+						) : (
+							<p style={{ color: 'teal' }}>공개</p>
+						)}
+					</Button>
+					{/* <ToggleBtn onClick={clickedToggle}/>
+					<p>Toggle Switch {!toggle ? 'OFF' : 'ON'}</p> */}
+				</Form.Group>
+				<Modal.Close asChild>
+					<Button floated='right' onClick={handleSubmit}>
+						저장
+					</Button>
+				</Modal.Close>
+			</Form>
+		</ModalWrapper>
 	);
 };
 
@@ -135,11 +154,11 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
 				<div className='project_img'>
 					<Image
 						fluid
-						label={{
-							color: project.share ? 'blue' : 'red',
-							corner: 'right',
-							icon: project.share ? 'globe' : 'heart',
-						}}
+						// label={{
+						// 	color: project.share ? 'blue' : 'red',
+						// 	corner: 'right',
+						// 	icon: project.share ? 'globe' : 'heart',
+						// }}
 						src='/img/projectPreviewImg.png'
 						alt='project preview image'
 					/>
@@ -189,18 +208,36 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
 
 export default ProjectPreview;
 
-const ModalWrapper = styled.div`
-	height: auto;
-	// border: 1px solid red;
+const ModalWrapper = styled.div``;
 
-	& > .modal_title {
-		font-size: 24px;
-	}
-
-	& > .modal_btn {
-	}
+const ToggleBtn = styled.button`
+	width: 130px;
+	height: 50px;
+	border-radius: 30px;
+	border: none;
+	cursor: pointer;
+	background-color: ${(props) => (!props.toggle ? 'none' : 'rgb(51,30,190)')};
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.5s ease-in-out;
 `;
-
+const Circle = styled.div`
+	background-color: white;
+	width: 38px;
+	height: 38px;
+	border-radius: 50px;
+	position: absolute;
+	left: 5%;
+	transition: all 0.5s ease-in-out;
+	${(props) =>
+		props.toggle &&
+		css`
+			transform: translate(80px, 0);
+			transition: all 0.5s ease-in-out;
+		`}
+`;
 const DimmedOverlay = styled(Modal.Overlay)`
 	position: fixed;
 	background-color: rgba(0, 0, 0, 0.5);
@@ -216,8 +253,10 @@ const CenteredModal = styled(Modal.Content)`
 	top: 50vh;
 	left: 50vw;
 	transform: translate(-50%, -50%);
-	width: 50%;
-	height: 50%;
+	width: 500px;
+	height: auto;
+	padding: 15px 15px 15px 15px;
+	border-radius: 10px;
 `;
 
 const ProjectContainer = styled.div`
