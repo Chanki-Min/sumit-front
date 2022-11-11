@@ -3,13 +3,12 @@ import styled, { css } from 'styled-components';
 import Image from 'next/image';
 import Footer from '../components/commons/Footer';
 import { useMediaQuery } from 'react-responsive';
-import Header from '../components/main/Header';
+import Header from '../components/layout/Header';
 // import LoginSection from '../components/main/LoginSection';
 import Login_Intro from '../components/main/Login_Intro';
 // import '../font/fontStyle.css';
 
 const Home: NextPage = () => {
-
 	const isPC = useMediaQuery({ minWidth: 768 });
 
 	return (
@@ -30,6 +29,6 @@ export default Home;
 
 const MainBackground = styled.div`
 	display: flex;
-	background-repeat : no-repeat;
-    /* background-size : cover; */
-`
+	background-repeat: no-repeat;
+	/* background-size : cover; */
+`;

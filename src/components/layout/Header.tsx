@@ -1,16 +1,17 @@
-//사용안함
-
-
-
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import useScroll from '../../hooks/useScroll';
+// import { authState } from '../../stores/auth';
+import MarginContainer from '../main/Margin';
 import { useUser } from '@auth0/nextjs-auth0';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Dropdown } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-
-const Header: React.FC = (props) => {
+const Header = ({ isPC }: { isPC: boolean }) => {
 	const { user } = useUser();
+	const { scrollY } = useScroll();
 
 	const options = [
 		// { key: 'home', text: '홈으로 가기', link: '/' },
@@ -19,11 +20,11 @@ const Header: React.FC = (props) => {
 		// { key: 'search', text: '대시보드 검색', link: '/search' },
 		{ key: 'logout', text: '로그아웃하기', link: '/api/auth/logout' },
 	];
-
+	// const navigate = useNavigate();
+	//   const { isAuthenticated } = useRecoilValue(authState);
 	return (
-		<>
+		<Wrapper scrollY={scrollY} isPC={isPC}>
 			<Navigation>
-				
 				<Link href={'/'} passHref>
 					<LogoBox>
 						<Image src='/img/mountain.png' alt='logo' width={28} height={32} />
@@ -55,12 +56,36 @@ const Header: React.FC = (props) => {
 					</Profile>
 				)}
 			</Navigation>
-		</>
+		</Wrapper>
 	);
 };
 
 export default Header;
 
+const Wrapper = styled.div<{ scrollY: number; isPC: boolean }>`
+	position: fixed;
+	height: ${({ isPC }) => (isPC ? '70px;' : '60px')};
+	width: 100%;
+	background-color: ${({ scrollY }) =>
+		scrollY > 30 ? `rgba(225, 225, 237, 0.884)` : `rgba(255, 255, 255, 0)`};
+	backdrop-filter: saturate(100%) blur(30px);
+	filter: drop-shadow(0px 1px 25px rgba(0, 0, 0, 0.1));
+	z-index: 10;
+	/* & > div {
+    font-weight: 500;
+    display: flex;
+    justify-content: center; //space-between,
+    align-items: center;
+    & > a {
+      position: absolute;
+      left: 32px;
+      cursor: pointer;
+      &:hover {
+        transform: translateY(-3px);
+        transition: all 0.3s ease;
+      }
+    } }*/
+`;
 const Navigation = styled.nav`
 	padding: 5px 20px;
 	width: 100%;
@@ -70,8 +95,8 @@ const Navigation = styled.nav`
 	justify-content: space-between;
 	align-items: center;
 	background-color: rgba(255, 255, 255, 0.2);
-	border-bottom : solid 1px rgba(156, 156, 156, 0.2);
-	
+	border-bottom: none;
+	/* solid 1px rgba(156, 156, 156, 0.2); */
 `;
 
 const LogoBox = styled.button`
@@ -83,11 +108,11 @@ const LogoBox = styled.button`
 
 	font-size: 20px;
 	font-weight: 700;
-	font-family: "title";
+	font-family: 'title';
 
 	background-color: transparent;
-	border:none;
-	
+	border: none;
+
 	&:hover {
 		color: #c39ff1;
 	}
