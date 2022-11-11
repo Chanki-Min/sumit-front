@@ -279,7 +279,7 @@ const PageWrapper = styled.section`
 	height: calc(100vh - 60px);
 	overflow: scroll;
 	justify-content: stretch;
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(255, 255, 255, 0.2);
 
 	& .leftWing {
 		flex: 0 0 300px;
@@ -290,19 +290,6 @@ const PageWrapper = styled.section`
 	}
 `;
 
-const LeftWing = styled.nav`
-	width: 100%;
-	height: 100%;
-	border-right: 2px solid black;
-	padding: 35px;
-
-	display: flex;
-	flex-direction: column;
-	gap: 30px;
-
-	font-size: 18px;
-	font-weight: 700;
-`;
 
 const Container = styled.div`
 	box-sizing: border-box;

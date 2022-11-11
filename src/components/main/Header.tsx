@@ -2,45 +2,67 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import useScroll from '../../hooks/useScroll';
+// import { authState } from '../../stores/auth';
 import MarginContainer from './Margin';
+import { useUser } from '@auth0/nextjs-auth0';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Dropdown } from 'semantic-ui-react';
+
 
 const Header = ({ isPC }: { isPC: boolean }) => {
+  const { user } = useUser();
   const { scrollY } = useScroll();
-  const navigate = useNavigate();
+
+  const options = [
+		// { key: 'home', text: '홈으로 가기', link: '/' },
+		{ key: 'mypage', text: '마이페이지', link: '/mypage' },
+		// { key: 'dashboard', text: '나의 대시보드', link: '/dashboard' },
+		// { key: 'search', text: '대시보드 검색', link: '/search' },
+		{ key: 'logout', text: '로그아웃하기', link: '/api/auth/logout' },
+	];
+  // const navigate = useNavigate();
 //   const { isAuthenticated } = useRecoilValue(authState);
   return (
     <Wrapper scrollY={scrollY} isPC={isPC}>
-      <MarginContainer>
-        <a
-          onClick={() => {
-            window.scrollTo(0, 0);
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.innerHTML = 'toward the top';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.innerHTML = 'sumit';
-          }}
-        >
-          gosrock.
-        </a>
-        {/* {isPC ? 
-          <Nav>
-            <a href="#yb">DAY1</a>
-            <a href="#ob">DAY2</a>
-            <a href="#info">유의사항</a>
-          </Nav>
-        ) : (
-          <button
-            onClick={() => {
-              navigate(`${isAuthenticated ? '/dashboard' : '/search'}`);
-            }}
-          >
-            {isAuthenticated ? '대시보드' : '브라우저'}
-          </button>
-        )} */}
-      </MarginContainer>
+      <Navigation>
+				
+				<Link href={'/'} passHref>
+					<LogoBox>
+						<Image src='/img/mountain.png' alt='logo' width={28} height={32} />
+						sumit
+					</LogoBox>
+				</Link>
+				{user && (
+					<Profile>
+						{user.picture && (
+							<div className='profile_img'>
+								<Image
+									src={user.picture}
+									layout='fill'
+									alt='user profile image'
+								/>
+							</div>
+						)}
+						<Dropdown trigger={user.name}>
+							<Dropdown.Menu>
+								{options.map((option) => (
+									<Dropdown.Item
+										key={option.key}
+										text={option.text}
+										href={option.link}
+									/>
+								))}
+							</Dropdown.Menu>
+						</Dropdown>
+					</Profile>
+				)}
+			</Navigation>
+      
+      
+				
     </Wrapper>
+    
   );
 };
 
@@ -48,20 +70,15 @@ export default Header;
 
 const Wrapper = styled.div<{ scrollY: number; isPC: boolean }>`
   position: fixed;
-  height: ${({ isPC }) => (isPC ? '80px;' : '60px')};
+  height: ${({ isPC }) => (isPC ? '70px;' : '60px')};
   width: 100%;
   background-color: ${({ scrollY }) =>
-    scrollY > 30 ? `rgba(255, 255, 255, 0.9)` : `rgba(255, 255, 255, 0.0)`};
-  backdrop-filter: saturate(100%) blur(20px);
-  filter: drop-shadow(0px 4px 25px rgba(0, 0, 0, 0.1));
+    scrollY > 30 ? `rgba(225, 225, 237, 0.884)` : `rgba(255, 255, 255, 0)`};
+  backdrop-filter: saturate(100%) blur(30px);
+  filter: drop-shadow(0px 1px 25px rgba(0, 0, 0, 0.1));
   z-index: 10;
-  & > div {
-    ${({ theme }) => theme.typo.text_16_R}
+  /* & > div {
     font-weight: 500;
-    color: ${({ theme, scrollY }) =>
-      scrollY > 30
-        ? theme.palette.mono.black_00
-        : theme.palette.mono.font_main};
     display: flex;
     justify-content: center; //space-between,
     align-items: center;
@@ -73,35 +90,55 @@ const Wrapper = styled.div<{ scrollY: number; isPC: boolean }>`
         transform: translateY(-3px);
         transition: all 0.3s ease;
       }
-    }
-    button {
-      margin-left: auto;
-      padding: 12px 16px;
-      background-color: ${({ theme, scrollY }) =>
-        scrollY > 30
-          ? theme.palette.mono.black_12
-          : theme.palette.mono.font_main};
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: ${({ theme, scrollY }) =>
-        scrollY > 30 ? theme.palette.mono.white : theme.palette.mono.black_12};
-      ${({ theme, isPC }) =>
-        isPC ? theme.typo.text_14_M : theme.typo.text_12_M}
-      &:active {
-        background-color: ${({ theme }) => theme.palette.mono.black_26};
-      }
-    }
-  }
+    } }*/
+    
+`;
+const Navigation = styled.nav`
+	padding: 5px 20px;
+	width: 100%;
+	height: 70px;
+
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: rgba(255, 255, 255, 0.2);
+	border-bottom : none;
+  /* solid 1px rgba(156, 156, 156, 0.2); */
+	
 `;
 
-const Nav = styled.div`
-  & > a:not(:last-child) {
-    margin-right: 64px;
-  }
-  cursor: pointer;
-  a:active {
-    color: ${({ theme }) => theme.palette.mono.black_26};
-  }
+const LogoBox = styled.button`
+	box-sizing: border-box;
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 8px;
+
+	font-size: 20px;
+	font-weight: 700;
+	font-family: "title";
+
+	background-color: transparent;
+	border:none;
+	
+	&:hover {
+		color: #c39ff1;
+	}
 `;
+
+const Profile = styled.a`
+	display: flex;
+	align-items: center;
+	margin-right: 50px;
+	font-size: 15px;
+
+	& > .profile_img {
+		position: relative;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		overflow: hidden;
+		margin-right: 10px;
+	}
+`;
+

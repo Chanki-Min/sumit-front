@@ -1,8 +1,13 @@
+//사용안함
+
+
+
 import { useUser } from '@auth0/nextjs-auth0';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Dropdown } from 'semantic-ui-react';
 import styled from 'styled-components';
+
 
 const Header: React.FC = (props) => {
 	const { user } = useUser();
@@ -18,6 +23,7 @@ const Header: React.FC = (props) => {
 	return (
 		<>
 			<Navigation>
+				
 				<Link href={'/'} passHref>
 					<LogoBox>
 						<Image src='/img/mountain.png' alt='logo' width={28} height={32} />
@@ -64,6 +70,8 @@ const Navigation = styled.nav`
 	justify-content: space-between;
 	align-items: center;
 	background-color: rgba(255, 255, 255, 0.2);
+	border-bottom : solid 1px rgba(156, 156, 156, 0.2);
+	
 `;
 
 const LogoBox = styled.button`
@@ -73,14 +81,15 @@ const LogoBox = styled.button`
 	align-items: center;
 	gap: 8px;
 
-	font-size: 30px;
+	font-size: 20px;
 	font-weight: 700;
+	font-family: "title";
 
 	background-color: transparent;
 	border:none;
 	
 	&:hover {
-		color: teal;
+		color: #c39ff1;
 	}
 `;
 
@@ -88,7 +97,7 @@ const Profile = styled.a`
 	display: flex;
 	align-items: center;
 	margin-right: 50px;
-	font-size: 18px;
+	font-size: 15px;
 
 	& > .profile_img {
 		position: relative;
