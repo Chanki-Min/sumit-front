@@ -20,7 +20,7 @@ const Header: React.FC = (props) => {
 			<Navigation>
 				<Link href={'/'} passHref>
 					<LogoBox>
-						<Image src='/img/mountain.png' alt='logo' width={40} height={40} />
+						<Image src='/img/mountain.png' alt='logo' width={28} height={32} />
 						sumit
 					</LogoBox>
 				</Link>
@@ -63,7 +63,8 @@ const Navigation = styled.nav`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(255, 255, 255, 0.2);
+	border-bottom: solid 1px rgba(156, 156, 156, 0.2);
 `;
 
 const LogoBox = styled.button`
@@ -73,7 +74,7 @@ const LogoBox = styled.button`
 	align-items: center;
 	gap: 8px;
 
-	font-size: 30px;
+	font-size: 20px;
 	font-weight: 700;
 
 	background-color: transparent;

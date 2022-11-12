@@ -42,7 +42,7 @@ const Dashboard = ({ user, pages }: DashboardProps) => {
 				rows='3'
 				columns={2}
 				style={{
-					backgroundColor: 'rgba(0, 0, 0, 0.2)',
+					backgroundColor: 'rgba(255, 255, 255, 0.2)',
 					margin: 'auto',
 					height: '100vh',
 				}}
