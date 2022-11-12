@@ -12,7 +12,7 @@ const Layout: React.FC<PropsWithChildren> = (props) => {
 
 	return (
 		<>
-			<Header isPC={false} />
+			<Header/>
 			<LayoutContent>{props.children} </LayoutContent>
 		</>
 	);

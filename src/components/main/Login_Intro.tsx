@@ -4,7 +4,7 @@ import { calcRem } from '../../styles/theme';
 import Image from 'next/image';
 import LoginSection from '../../pages/LoginSection';
 
-const TitleSection = ({ isPC }: { isPC: boolean }) => {
+const Login_Intro = ({ isPC }: { isPC: boolean }) => {
   const { scrollY } = useScroll();
 
   return (
@@ -32,7 +32,7 @@ const TitleSection = ({ isPC }: { isPC: boolean }) => {
     </Wrapper>
   );
 };
-export default TitleSection;
+export default Login_Intro;
 
 const Wrapper = styled.div<{ isPC: boolean }>`
   height: 100vh;

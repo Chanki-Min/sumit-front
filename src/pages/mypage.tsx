@@ -175,10 +175,10 @@ export default Mypage;
 
 const Changebutton = styled.button<{ isActive: boolean }>`
 	border-color: gray;
-	border-radius: 3px;
+	border-radius: 5px;
 	margin-top: 10px;
 
-	color: white;
+	color: #000000;
 	width: 90px;
 	height: 35px;
 	background-color: gray;
@@ -186,8 +186,8 @@ const Changebutton = styled.button<{ isActive: boolean }>`
 	${(p) =>
 		p.isActive === true &&
 		css`
-			background-color: #3f9df5;
-			border-color: #3f9df5;
+			background-color: rgb(167, 199, 247);
+			border-color: rgb(182, 211, 255);
 		`}
 `;
 
@@ -198,6 +198,7 @@ const InputSection = styled.div`
 		background-color: #00b496;
 		border-radius: 10px;
 		width: 80px;
+		height: px;
 		text-align: center;
 		color: white;
 	}
@@ -218,7 +219,7 @@ const ProfileSection = styled.div`
 	& .img_cont {
 		width: 120px;
 		height: 120px;
-		background-color: aqua;
+		background-color: #00ffff;
 	}
 
 	& .button_cont {
@@ -264,7 +265,7 @@ const NameSection = styled.div`
 	& > div > div {
 		width: 80px;
 		height: 20px;
-		color: green;
+		color: rgb(49, 216, 166);
 	}
 
 	input {
