@@ -64,7 +64,7 @@ const Navigation = styled.nav`
 	justify-content: space-between;
 	align-items: center;
 	background-color: rgba(255, 255, 255, 0.2);
-	border-bottom: solid 1px rgba(156, 156, 156, 0.2);
+	border-bottom: solid 1px rgba(156, 156, 156, 0.2); // 추가
 `;
 
 const LogoBox = styled.button`
