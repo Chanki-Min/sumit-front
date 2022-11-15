@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
-// import { ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import GlobalStyle from "../styles/globalStyle";
 import Layout from "../components/layout/index";
 import { UserProvider } from "@auth0/nextjs-auth0";
@@ -32,7 +32,7 @@ function SumitApp({
         <title>boilerplate</title>
       </Head>
       <GlobalStyle />
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient} >
         <Hydrate state={pageProps.dehydratedState}>
           {/* <ThemeProvider> */}
           <UserProvider>

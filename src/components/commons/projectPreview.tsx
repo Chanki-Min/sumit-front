@@ -221,7 +221,7 @@ const DimmedOverlay = styled(Modal.Overlay)`
 
 const CenteredModal = styled(Modal.Content)`
 	position: fixed;
-	background-color: white;
+	background-color: pink;
 	top: 50vh;
 	left: 50vw;
 	transform: translate(-50%, -50%);

@@ -92,7 +92,6 @@ const SearchBar = styled.div`
 	height: auto;
 	margin: 20px auto 0 auto;
 	border-bottom: 2px solid gray;
-
 	& > .ui input {
 		width: 430px;
 		border: none;

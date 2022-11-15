@@ -1,18 +1,26 @@
 import { useUser } from '@auth0/nextjs-auth0';
+import { useMediaQuery } from 'react-responsive';
 import Link from 'next/link';
 import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
+import Image from 'next/image';
 
 const LoginSection: React.FC = () => {
+
 	const { user, isLoading } = useUser();
 
+	const isPC = useMediaQuery({ minWidth: 768 });
+
 	if (isLoading) {
-		return <Container></Container>;
+		return(
+		<Container></Container>)
 	}
 
 	if (typeof user === 'undefined') {
 		return (
+			
 			<Container>
+				
 				<h1>로그인하고 sumit을 시작해보세요!</h1>
 				<BtnBox>
 					<Link href={'/api/auth/login'} passHref>
@@ -55,6 +63,8 @@ const LoginSection: React.FC = () => {
 
 export default LoginSection;
 
+
+
 const Container = styled.div`
 	box-sizing: border-box;
 	display: flex;
@@ -62,9 +72,10 @@ const Container = styled.div`
 	align-items: center;
 	width: 100%;
 	height: 100%;
-	padding-top: 300px;
-	background-color: rgba(0, 0, 0, 0.2);
+	/* background-color: rgb(255, 255, 255); */
 
+	/* margin-top: 200px; */
+	
 	& > h1 {
 		font-size: 52px;
 		font-weight: 600;
@@ -78,7 +89,7 @@ const BtnBox = styled.div`
 		height: 40px;
 		margin: 10px 10px 10px 10px;
 		line-height: 15px;
-		background-color: rgba(0, 0, 0, 0.7);
+		background-color: rgba(112, 112, 112, 0.7);
 		color: white;
 
 		&:hover {
