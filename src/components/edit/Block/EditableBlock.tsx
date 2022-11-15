@@ -1,3 +1,5 @@
+import { r } from "msw/lib/glossary-297d38ba";
+import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
 import { Block } from "../../../models/block";
@@ -6,8 +8,12 @@ import { DraggerContainer } from "../../../styles/Block";
 import { IWithPath } from "../../../tree/tree";
 import { getBlockPrototype, getNextPath } from "../../../tree/treeUtil";
 import Dropzone, { ItemTypes } from "../Dropzone/Dropzone";
+import { moveFocus } from "../Editor";
 import {
   RenderBulletedList,
+  RenderHeading1,
+  RenderHeading2,
+  RenderHeading3,
   RenderNumberedList,
   RenderPlainText,
   RenderSimpleMargin,
@@ -37,6 +43,22 @@ interface EditableBlockProps {
   ) => void;
 }
 
+const getCarrotPosition = () => {
+  var sel = document.getSelection();
+
+  sel.modify("extend", "backward", "paragraphboundary");
+
+  var pos = sel.toString().length;
+  if (sel.anchorNode != undefined) sel.collapseToEnd();
+
+  return {
+    isPrevExist:
+      (sel.focusNode.previousSibling as HTMLBRElement)?.tagName === "BR",
+    pos: pos,
+    isNextExist: (sel.focusNode.nextSibling as HTMLBRElement)?.tagName === "BR",
+  };
+};
+
 const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   const {
     block,
@@ -47,6 +69,9 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     handleIndentation,
     path,
   } = props;
+
+  const router = useRouter();
+  const isEditable = router.pathname.startsWith("/edit");
 
   const blockRef = useRef<Block>(block);
 
@@ -85,6 +110,45 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     const prevKey = previousKey.current;
+
+    if (key === "ArrowUp") {
+      const carrotPos = getCarrotPosition();
+      console.log(carrotPos);
+      if (carrotPos.isPrevExist) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const splitPath = path.split("-").map((s) => Number(s));
+
+      moveFocus(
+        [
+          ...splitPath.slice(0, splitPath.length - 1),
+          splitPath.at(-1) - 1,
+        ].join("-")
+      );
+    }
+
+    if (key === "ArrowDown") {
+      const carrotPos = getCarrotPosition();
+      console.log(carrotPos);
+      if (carrotPos.isNextExist) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+      const splitPath = path.split("-").map((s) => Number(s));
+      moveFocus(
+        [
+          ...splitPath.slice(0, splitPath.length - 1),
+          splitPath.at(-1) + 1,
+        ].join("-")
+      );
+    }
+
     //shift enter 지원
     if (key === "Enter" && prevKey !== "Shift") {
       e.preventDefault();
@@ -152,25 +216,62 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
+      canDrag: isEditable,
     }),
     [path, block]
   );
 
   let renderElement: ReactElement<any, any> | null = <></>;
+
   switch (block.type) {
     case "plain_text":
       renderElement = (
         <RenderPlainText
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
-          // ref={contentEditable}
+          ref={contentEditable}
+        />
+      );
+      break;
+    case "heading_1":
+      renderElement = (
+        <RenderHeading1
+          editable={isEditable}
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          ref={contentEditable}
+        />
+      );
+      break;
+    case "heading_2":
+      renderElement = (
+        <RenderHeading2
+          editable={isEditable}
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          ref={contentEditable}
+        />
+      );
+      break;
+    case "heading_3":
+      renderElement = (
+        <RenderHeading3
+          editable={isEditable}
+          block={block}
+          onChange={handlePropertyChange}
+          onKeyDown={handleKeyDown}
+          ref={contentEditable}
         />
       );
       break;
     case "to_do_list":
       renderElement = (
         <RenderTodo
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -181,10 +282,11 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     case "bulleted_list":
       renderElement = (
         <RenderBulletedList
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
@@ -198,17 +300,19 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
 
       renderElement = (
         <RenderNumberedList
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
           numberedListIndex={myIndex}
-          // ref={contentEditable}
+          ref={contentEditable}
         />
       );
       break;
     case "simple_margin":
       renderElement = (
         <RenderSimpleMargin
+          editable={isEditable}
           block={block}
           onChange={handlePropertyChange}
           onKeyDown={handleKeyDown}
@@ -255,10 +359,94 @@ const EditableBlock: React.FC<EditableBlockProps> = (props) => {
     );
   }
 
+  if (block.type === "grid_divider") {
+    return null;
+  }
+
+  if (block.type === "grid_1x2") {
+    // TODO GRID 블록 구현
+
+    const dividerIndex = block.children.findIndex(
+      (b) => b.type === "grid_divider"
+    );
+
+    const left = block.children.slice(0, dividerIndex);
+    const right = block.children.slice(dividerIndex + 1);
+
+    return (
+      <>
+        <div
+          style={{
+            position: "relative",
+            border: isEditable ? ".5px dashed black" : undefined,
+          }}
+        >
+          <Dropzone
+            parentId={block.parent}
+            key={`dropzone_${path}`}
+            path={path}
+            handleMoveToPath={handleMoveToPath}
+            handleAddBlock={handleAddBlock}
+          />
+          <DraggerContainer ref={drag} id={`path-${path}`}>
+            <div
+              style={{
+                marginLeft: "15px",
+                position: "relative",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                {left.map((cb, index) => {
+                  return (
+                    <EditableBlock
+                      path={`${path}-${index}`}
+                      key={`${path}-${index}-${cb.uuid}`}
+                      block={cb}
+                      siblingList={block.children}
+                      handleAddBlock={handleAddBlock}
+                      handleDeleteThis={handleDeleteThis}
+                      handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+                      handleMoveToPath={handleMoveToPath}
+                      handleIndentation={handleIndentation}
+                    />
+                  );
+                })}
+              </div>
+              <div>
+                {right.map((cb, index) => {
+                  console.log(index, dividerIndex, index + dividerIndex);
+                  return (
+                    <EditableBlock
+                      path={`${path}-${index + dividerIndex + 1}`}
+                      key={`${path}-${index + dividerIndex + 1}-${cb.uuid}`}
+                      block={cb}
+                      siblingList={block.children}
+                      handleAddBlock={handleAddBlock}
+                      handleDeleteThis={handleDeleteThis}
+                      handleUpdateWithoutChildren={handleUpdateWithoutChildren}
+                      handleMoveToPath={handleMoveToPath}
+                      handleIndentation={handleIndentation}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </DraggerContainer>
+        </div>
+      </>
+    );
+  }
   // TODO: css 고치기 (너무 inline style에 의존하는데, 고쳐야 합니다)
   return (
     <>
-      <div style={{ position: "relative" }}>
+      <div
+        style={{
+          position: "relative",
+          border: isEditable ? ".5px dashed black" : undefined,
+        }}
+      >
         <Dropzone
           parentId={block.parent}
           key={`dropzone_${path}`}

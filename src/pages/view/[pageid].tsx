@@ -24,7 +24,7 @@ interface PageProps {
   user?: UserProfile;
 }
 
-const EditPage = ({ user }: PageProps) => {
+const ViewPage = ({ user }: PageProps) => {
   const router = useRouter();
 
   const pageQuery = usePageByIdQuery(router.query.pageid as string);
@@ -83,6 +83,8 @@ export const getServerSideProps = withPageAuthRequired<PageProps>({
       accessToken
     );
 
+    console.log(JSON.stringify(page, null, 2));
+
     // Pass user to render method
     return {
       props: {
@@ -93,4 +95,4 @@ export const getServerSideProps = withPageAuthRequired<PageProps>({
   },
 });
 
-export default EditPage;
+export default ViewPage;

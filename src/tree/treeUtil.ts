@@ -114,6 +114,72 @@ export function getBlockPrototype(
           children: [],
         };
       }
+    case "heading_1":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "heading_1",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "heading_1",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
+    case "heading_2":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "heading_2",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "heading_2",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
+    case "heading_3":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "heading_3",
+          properties: {
+            text: "",
+          },
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "heading_3",
+          properties: {
+            text: "",
+          },
+          children: [],
+        };
+      }
     case "to_do_list":
       if (options) {
         return {
@@ -202,6 +268,76 @@ export function getBlockPrototype(
           properties: {
             height: 10,
           },
+          children: [],
+        };
+      }
+
+    case "grid_1x2":
+      const blockId = uuidv4();
+
+      if (options) {
+        return {
+          uuid: blockId,
+          type: "grid_1x2",
+          properties: {
+            row_ratios: [50, 50],
+          },
+          children: [
+            getBlockPrototype("plain_text", {
+              order: 0,
+              parent: blockId,
+            }),
+            getBlockPrototype("grid_divider", {
+              order: 1,
+              parent: blockId,
+            }),
+            getBlockPrototype("plain_text", {
+              order: 2,
+              parent: blockId,
+            }),
+          ],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: blockId,
+          type: "grid_1x2",
+          properties: {
+            row_ratios: [50, 50],
+          },
+          children: [
+            getBlockPrototype("plain_text", {
+              order: 0,
+              parent: blockId,
+            }),
+            getBlockPrototype("grid_divider", {
+              order: 1,
+              parent: blockId,
+            }),
+            getBlockPrototype("plain_text", {
+              order: 2,
+              parent: blockId,
+            }),
+          ],
+        };
+      }
+
+    case "grid_divider":
+      if (options) {
+        return {
+          uuid: uuidv4(),
+          type: "grid_divider",
+          properties: {},
+          children: [],
+          order: options.order,
+          parent: options.parent,
+        };
+      } else {
+        return {
+          uuid: uuidv4(),
+          type: "grid_divider",
+          properties: {},
           children: [],
         };
       }

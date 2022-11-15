@@ -105,15 +105,14 @@ const LogoBox = styled.button`
   align-items: center;
   gap: 8px;
 
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 700;
-  font-family: "title";
 
   background-color: transparent;
   border: none;
 
   &:hover {
-    color: #c39ff1;
+    color: teal;
   }
 `;
 
@@ -121,7 +120,7 @@ const Profile = styled.a`
   display: flex;
   align-items: center;
   margin-right: 50px;
-  font-size: 15px;
+  font-size: 18px;
 
   & > .profile_img {
     position: relative;

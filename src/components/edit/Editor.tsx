@@ -21,7 +21,10 @@ interface EditorProps {
 const throttledSync = debounce(
   (block: Block) => {
     try {
-      axios.post("/api/blocks/bulk", block);
+      axios.post("/api/blocks/bulk", {
+        ...block,
+        blockJson: null,
+      });
     } catch (e) {
       console.error(e);
     }
@@ -215,7 +218,7 @@ const Editor: React.FC<EditorProps> = ({ rootBlockId }) => {
   );
 };
 
-const moveFocus = (path: string) => {
+export const moveFocus = (path: string) => {
   if (IS_SERVER_SIDE) {
     return;
   }

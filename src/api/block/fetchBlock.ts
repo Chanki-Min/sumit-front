@@ -24,7 +24,11 @@ async function fetchBlockById(blockId: string): Promise<Block> {
   // }
   // return rootBlockMock;
 
-  return (await axios.get(`/api/blocks/tree/${blockId}`)).data;
+  const blocks = (await axios.get(`/api/blocks/tree/${blockId}`)).data;
+
+  console.log(JSON.stringify(blocks), blockId);
+
+  return blocks?.blockJson ?? blocks;
 }
 
 // react-query key 관리용 객체
