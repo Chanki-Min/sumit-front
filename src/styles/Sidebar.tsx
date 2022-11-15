@@ -31,7 +31,7 @@ export const Slider = styled.div<SliderProps>`
 
 export const SliderParent = styled.div`
   display: flex;
-  margin-top: 42px;
+
   flex-direction: row;
   justify-content: stretch;
   height: 100%;

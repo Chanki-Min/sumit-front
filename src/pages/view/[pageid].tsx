@@ -38,13 +38,6 @@ const ViewPage = ({ user }: PageProps) => {
 
   return (
     <>
-      <MenuBar
-        leftBarVisible={showLeftSidebar}
-        setLeftBarVisible={setShowLeftSidebar}
-        rightBarVisible={showRightSidebar}
-        setRightBarvisible={setShowRightSidebar}
-      />
-
       <DndProvider backend={HTML5Backend}>
         <SliderParent>
           {/* <SlidesSelectionSidebar

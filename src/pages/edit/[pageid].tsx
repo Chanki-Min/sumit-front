@@ -38,12 +38,12 @@ const EditPage = ({ user }: PageProps) => {
 
   return (
     <>
-      <MenuBar
+      {/* <MenuBar
         leftBarVisible={showLeftSidebar}
         setLeftBarVisible={setShowLeftSidebar}
         rightBarVisible={showRightSidebar}
         setRightBarvisible={setShowRightSidebar}
-      />
+      /> */}
 
       <DndProvider backend={HTML5Backend}>
         <SliderParent>

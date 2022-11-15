@@ -50,10 +50,27 @@ const DeleteModal = ({ project }: { project: OmittedPage }) => {
 
   return (
     <ModalWrapper>
-      <h3>삭제</h3>
-      <p>{`${title} 페이지를 삭제하시겠어요?`}</p>
+      <h2
+        style={{
+          margin: "10px 0 20px",
+          fontSize: "20px",
+          fontWeight: 700,
+        }}
+      >
+        삭제
+      </h2>
+
+      <p>
+        <b
+          style={{
+            fontWeight: 600,
+            padding: "0 5px 0 0",
+          }}
+        >{`\"${title}\"`}</b>
+        페이지를 삭제하시겠어요?
+      </p>
       <Modal.Close asChild>
-        <Button floated="right" onClick={handleDelete}>
+        <Button floated="right" color="red" onClick={handleDelete}>
           삭제
         </Button>
       </Modal.Close>
@@ -94,7 +111,15 @@ const NameModal = ({ project }: { project: OmittedPage }) => {
   return (
     <ModalWrapper>
       <Form>
-        <h3>이름 변경</h3>
+        <h2
+          style={{
+            margin: "10px 0 20px",
+            fontSize: "20px",
+            fontWeight: 700,
+          }}
+        >
+          이름 변경
+        </h2>
         <Form.Group inline>
           <label className="modal_title">제목</label>
           <Input
@@ -225,7 +250,7 @@ const DimmedOverlay = styled(Modal.Overlay)`
 
 const CenteredModal = styled(Modal.Content)`
   position: fixed;
-  background-color: pink;
+  background-color: white;
   top: 50vh;
   left: 50vw;
   transform: translate(-50%, -50%);

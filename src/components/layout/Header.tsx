@@ -64,12 +64,14 @@ export default Header;
 
 const Wrapper = styled.div<{ scrollY: number; isPC: boolean }>`
   position: fixed;
+  top: 0px;
   height: ${({ isPC }) => (isPC ? "70px;" : "60px")};
   width: 100%;
   background-color: ${({ scrollY }) =>
     scrollY > 30 ? `rgba(225, 225, 237, 0.884)` : `rgba(255, 255, 255, 0)`};
   backdrop-filter: saturate(100%) blur(30px);
   filter: drop-shadow(0px 1px 25px rgba(0, 0, 0, 0.1));
+
   z-index: 10;
   /* & > div {
     font-weight: 500;

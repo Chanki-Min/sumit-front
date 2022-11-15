@@ -43,7 +43,13 @@ class MyDocument extends Document {
             crossOrigin="anonymous"
           ></script>
         </Head>
-        <body>
+        <body
+          style={{
+            paddingTop: "70px",
+            position: "relative",
+            minHeight: "100%",
+          }}
+        >
           <Main />
           <div id="portal" />
           <NextScript />
