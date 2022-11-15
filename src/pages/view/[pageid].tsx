@@ -40,14 +40,9 @@ const ViewPage = ({ user }: PageProps) => {
     <>
       <DndProvider backend={HTML5Backend}>
         <SliderParent>
-          {/* <SlidesSelectionSidebar
-            visible={showLeftSidebar}
-            slides={pageQuery.data.slides}
-          /> */}
           <EditArea>
             <Editor rootBlockId={pageQuery.data.slides[0].root_block.uuid} />
           </EditArea>
-          <BlockDraggerSidebar visible={showRightSidebar} />
         </SliderParent>
       </DndProvider>
     </>

@@ -290,7 +290,7 @@ export const RenderSimpleMargin = forwardRef<HTMLElement, RenderderProps>(
       onChange({
         height: height,
       });
-    }, [height, editable]);
+    }, [height, editable, onChange]);
 
     const handler = (mouseDownEvent: React.MouseEvent<HTMLButtonElement>) => {
       if (!editable) {

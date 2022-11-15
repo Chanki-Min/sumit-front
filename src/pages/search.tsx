@@ -49,16 +49,23 @@ const Search = () => {
   return (
     <>
       <SearchBar>
-        <div className="ui input">
+        <Button size="medium" className="search_btn">
+          <Button.Content visible>
+            <Icon size="small" name="search" />
+          </Button.Content>
+        </Button>
+
+        <span className="ui input">
           <input
             type="text"
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="검색어를 입력하세요..."
             value={searchInput}
           />
-        </div>
+        </span>
+
         <Button
-          animated
+          size="medium"
           className="search_btn"
           onClick={() => {
             replace({
@@ -68,11 +75,8 @@ const Search = () => {
             });
           }}
         >
-          <Button.Content visible>
-            <Icon name="search" />
-          </Button.Content>
           <Button.Content hidden>
-            <Icon name="arrow right" />
+            <Icon size="small" name="arrow right" />
           </Button.Content>
         </Button>
       </SearchBar>
@@ -92,17 +96,22 @@ const SearchBar = styled.div`
   height: auto;
   margin: 20px auto 0 auto;
   border-bottom: 2px solid gray;
-  & > .ui input {
-    width: 430px;
+  display: flex;
+  justify-content: space-between;
+  & > .ui.input {
+    /* width: 430px; */
     border: none;
+    flex: 1 50px;
+
+    & > input {
+      border: none;
+    }
   }
 
   & > .search_btn {
+    flex: 0 0 30px;
     margin: 0 0 0 5px;
-    background-color: transparent;
-
-    &:hover {
-      background-color: transparent;
-    }
+    padding: 0;
+    background-color: transparent !important;
   }
 `;

@@ -11,6 +11,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true, // enable swc complier's styled-component support
     swcMinify: true, // enable swc minifier, https://nextjs.org/docs/advanced-features/compiler#minification
+    removeConsole: true,
   },
   images: {
     domains: ["lh3.googleusercontent.com", "s3.ap-northeast-2.amazonaws.com"],
