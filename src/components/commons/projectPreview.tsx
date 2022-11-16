@@ -176,7 +176,9 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({
     <ProjectContainer>
       <Link
         href={{
-          pathname: `/edit/${project.uuid}`,
+          pathname: viewOnly
+            ? `/view/${project.uuid}`
+            : `/edit/${project.uuid}`,
         }}
         passHref
       >
@@ -196,34 +198,38 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({
       <div className="project_header">
         <Link
           href={{
-            pathname: `/edit/${project.uuid}`,
+            pathname: viewOnly
+              ? `/view/${project.uuid}`
+              : `/edit/${project.uuid}`,
           }}
           passHref
         >
           {project.title}
         </Link>
-        <Dropdown className="menu_btn" icon="ellipsis horizontal icon">
-          <Dropdown.Menu>
-            {options.map((option) => (
-              <Modal key={option.key}>
-                <Modal.Trigger asChild>
-                  <Dropdown.Item key={option.key} text={option.text} />
-                </Modal.Trigger>
-                <Modal.Portal>
-                  <DimmedOverlay>
-                    <CenteredModal
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      {getModalContent(option.key, project)}
-                    </CenteredModal>
-                  </DimmedOverlay>
-                </Modal.Portal>
-              </Modal>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+        {!viewOnly && (
+          <Dropdown className="menu_btn" icon="ellipsis horizontal icon">
+            <Dropdown.Menu>
+              {options.map((option) => (
+                <Modal key={option.key}>
+                  <Modal.Trigger asChild>
+                    <Dropdown.Item key={option.key} text={option.text} />
+                  </Modal.Trigger>
+                  <Modal.Portal>
+                    <DimmedOverlay>
+                      <CenteredModal
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        {getModalContent(option.key, project)}
+                      </CenteredModal>
+                    </DimmedOverlay>
+                  </Modal.Portal>
+                </Modal>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
       </div>
       <div className="project_description">{project.description}</div>
       <div className="project_hashtags">
