@@ -27,6 +27,8 @@ const Wrapper = styled.div`
   height: 180px;
   display: flex;
   flex-direction: column;
+  
+  margin-top: 200px;
   justify-content: center;
   align-items: center;
   & > p {
